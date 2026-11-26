@@ -315,24 +315,24 @@ class PuGameRepository(
         return PuGameRecord(
             id = id,
             rootPath = rootPath,
-            title = json.string("title").orEmpty(),
-            engine = json.string("engine")?.let { value ->
+            title = objectValue.string("title").orEmpty(),
+            engine = objectValue.string("engine")?.let { value ->
                 runCatching { PuEngineType.valueOf(value) }.getOrDefault(PuEngineType.UNKNOWN)
             } ?: PuEngineType.UNKNOWN,
-            version = json.string("version").orEmpty(),
-            fingerprint = json.string("fingerprint").orEmpty(),
-            importedAt = json.long("importedAt") ?: 0,
-            updatedAt = json.long("updatedAt") ?: 0,
-            originalSizeBytes = json.long("originalSizeBytes") ?: 0,
-            cacheSizeBytes = json.long("cacheSizeBytes") ?: 0,
-            selectedProfile = json.string("selectedProfile")?.let { value ->
+            version = objectValue.string("version").orEmpty(),
+            fingerprint = objectValue.string("fingerprint").orEmpty(),
+            importedAt = objectValue.long("importedAt") ?: 0,
+            updatedAt = objectValue.long("updatedAt") ?: 0,
+            originalSizeBytes = objectValue.long("originalSizeBytes") ?: 0,
+            cacheSizeBytes = objectValue.long("cacheSizeBytes") ?: 0,
+            selectedProfile = objectValue.string("selectedProfile")?.let { value ->
                 runCatching { PuProfile.valueOf(value) }.getOrNull()
             },
-            compatibility = json.string("compatibility")?.let { value ->
+            compatibility = objectValue.string("compatibility")?.let { value ->
                 runCatching { PuCompatibilityEstimate.valueOf(value) }.getOrDefault(PuCompatibilityEstimate.LIKELY_SMOOTH)
             } ?: PuCompatibilityEstimate.LIKELY_SMOOTH,
-            appliedFixIds = json.array("appliedFixIds").mapNotNull { (it as? PuJsonValue.JsonString)?.value },
-            sourceUri = json.string("sourceUri"),
+            appliedFixIds = objectValue.array("appliedFixIds").mapNotNull { (it as? PuJsonValue.JsonString)?.value },
+            sourceUri = objectValue.string("sourceUri"),
         )
     }
 }

@@ -148,7 +148,7 @@ class PuCompatibilityService(
             val engine = profileObject.string("engine")?.let { engineName ->
                 runCatching { PuEngineType.valueOf(engineName) }.getOrDefault(PuEngineType.UNKNOWN)
             } ?: PuEngineType.UNKNOWN
-            val settingsObject = profileObject.object("settings")
+            val settingsObject = profileObject.jsonObject("settings")
             val settings = settingsObject?.values.orEmpty().mapNotNull { (key, settingValue) ->
                 (settingValue as? PuJsonValue.JsonString)?.value?.let { key to it }
             }.toMap()

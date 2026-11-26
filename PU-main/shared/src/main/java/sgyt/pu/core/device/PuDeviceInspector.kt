@@ -118,66 +118,16 @@ class PuDeviceInspector(private val context: Context) : PuDeviceProbe {
     }
 
     /**
-     * Checks the real EGL implementation, not only the manifest requirement.
+     * Checks the real OpenGL ES implementation via GLES20, not only the manifest requirement.
      * The ES3 renderable bit is part of EGL_KHR_create_context and is present
      * on Android implementations that expose OpenGL ES 3.0.
      */
     private fun readGlVersion(): Pair<Int, Int> {
-        val display = EGL14.eglGetDisplay(EGL14.EGL_DEFAULT_DISPLAY)
-        if (display == EGL14.EGL_NO_DISPLAY) return 2 to 0
-        val version = IntArray(2)
-        if (!EGL14.eglInitialize(display, version, 0, version, 1)) return 2 to 0
-
-        var eglContext: EGLContext = EGL14.EGL_NO_CONTEXT
-        var eglSurface: EGLSurface = EGL14.EGL_NO_SURFACE
-        try {
-            val configAttributes = intArrayOf(
-                EGL14.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT,
-                EGL14.EGL_SURFACE_TYPE, EGL14.EGL_PBUFFER_BIT,
-                EGL14.EGL_RED_SIZE, 8,
-                EGL14.EGL_GREEN_SIZE, 8,
-                EGL14.EGL_BLUE_SIZE, 8,
-                EGL14.EGL_NONE,
-            )
-            val configs = arrayOfNulls<EGLConfig>(1)
-            val configCount = IntArray(1)
-            if (!EGL14.eglChooseConfig(display, configAttributes, 0, configs, 0, 1, configCount, 0) ||
-                configCount[0] == 0
-            ) {
-                return 2 to 0
-            }
-
-            val contextAttributes = intArrayOf(EGL14.EGL_CONTEXT_CLIENT_VERSION, 3, EGL14.EGL_NONE)
-            eglContext = EGL14.eglCreateContext(display, configs[0], EGL14.EGL_NO_CONTEXT, contextAttributes, 0)
-            if (eglContext == EGL14.EGL_NO_CONTEXT) return 2 to 0
-
-            val surfaceAttributes = intArrayOf(EGL14.EGL_WIDTH, 1, EGL14.EGL_HEIGHT, 1, EGL14.EGL_NONE)
-            eglSurface = EGL14.eglCreatePbufferSurface(display, configs[0], surfaceAttributes, 0)
-            if (eglSurface == EGL14.EGL_NO_SURFACE) return 2 to 0
-            if (!EGL14.eglMakeCurrent(display, eglSurface, eglSurface, eglContext)) return 2 to 0
-
-            val value = IntArray(1)
-            EGL14.eglGetIntegerv(EGL14.EGL_VERSION, value, 0)
-            val major = value[0].let { encoded ->
-                if (encoded >= 0x00030000) 3 else 2
-            }
-            val versionText = EGL14.eglQueryString(display, EGL14.EGL_VERSION).orEmpty()
-            val minor = Regex("OpenGL ES (\\d+\\.\\d+)").find(versionText)
-                ?.groupValues?.getOrNull(1)
-                ?.substringAfter('.')
-                ?.toIntOrNull() ?: 0
-            return major to minor
-        } finally {
-            EGL14.eglMakeCurrent(
-                display,
-                EGL14.EGL_NO_SURFACE,
-                EGL14.EGL_NO_SURFACE,
-                EGL14.EGL_NO_CONTEXT,
-            )
-            if (eglSurface != EGL14.EGL_NO_SURFACE) EGL14.eglDestroySurface(display, eglSurface)
-            if (eglContext != EGL14.EGL_NO_CONTEXT) EGL14.eglDestroyContext(display, eglContext)
-            EGL14.eglTerminate(display)
-        }
+        val versionText = GLES20.glGetString(GLES20.GL_VERSION).orEmpty()
+        val versionMatch = Regex("""OpenGL ES (\d+)\.(\d+)""").find(versionText)
+        val major = versionMatch?.groupValues?.getOrNull(1)?.toIntOrNull() ?: 2
+        val minor = versionMatch?.groupValues?.getOrNull(2)?.toIntOrNull() ?: 0
+        return major to minor
     }
 
     private companion object {

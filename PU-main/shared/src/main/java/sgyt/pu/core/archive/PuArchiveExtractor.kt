@@ -249,7 +249,7 @@ class PuArchiveExtractor(
     }
 
     private fun readTarString(header: ByteArray, offset: Int, length: Int): String {
-        val end = (offset until offset + length).firstOrNull { header[it] == 0 } ?: offset + length
+        val end = (offset until offset + length).firstOrNull { header[it] == 0.toByte() } ?: offset + length
         return String(header, offset, end - offset, Charsets.UTF_8).trim()
     }
 

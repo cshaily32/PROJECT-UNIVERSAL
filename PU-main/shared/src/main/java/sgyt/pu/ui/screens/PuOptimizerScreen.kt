@@ -36,6 +36,7 @@ import sgyt.pu.ui.components.PuLabel
 import sgyt.pu.ui.components.PuMetric
 import sgyt.pu.ui.components.PuNotice
 import sgyt.pu.ui.components.PuPrimaryButton
+import sgyt.pu.ui.components.PuPrimaryCard
 import sgyt.pu.ui.components.PuProgressBar
 import sgyt.pu.ui.components.PuScreen
 import sgyt.pu.ui.components.PuSecondaryButton

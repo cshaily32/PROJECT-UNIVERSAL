@@ -244,7 +244,7 @@ private fun PuDeviceFact(
 private fun puDeviceIcon(icon: PuDeviceIcon): ImageVector = when (icon) {
     PuDeviceIcon.PROCESSOR -> Icons.Outlined.PhoneAndroid
     PuDeviceIcon.ANDROID -> Icons.Outlined.Security
-    PuDeviceIcon.MEMORY -> Icons.Outlined.BatteryCharging
+    PuDeviceIcon.MEMORY -> Icons.Outlined.WarningAmber
     PuDeviceIcon.STORAGE -> Icons.Outlined.Storage
     PuDeviceIcon.GRAPHICS -> Icons.Outlined.Build
     PuDeviceIcon.WEBVIEW -> Icons.Outlined.SportsEsports
@@ -654,7 +654,7 @@ fun SettingsScreen(
                     onClick = onOpenTranslation,
                 )
                 PuSettingRow(
-                    icon = Icons.Outlined.BatteryCharging,
+                    icon = Icons.Outlined.WarningAmber,
                     title = "Background optimization",
                     detail = if (config.backgroundWorkEnabled) "Optimize while charging and no game is running" else "Not available in PU Lite",
                     onClick = if (config.backgroundWorkEnabled) onOpenBackground else null,

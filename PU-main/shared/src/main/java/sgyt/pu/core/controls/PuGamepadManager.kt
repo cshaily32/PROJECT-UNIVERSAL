@@ -17,21 +17,21 @@ interface PuGamepadProbe {
 class AndroidPuGamepadManager : PuGamepadProbe {
     override fun listGamepads(): List<PuGamepadInfo> = InputDevice.getDeviceIds()
         .mapNotNull { deviceId -> InputDevice.getDevice(deviceId) }
-        .filter { device -> (device.sources and GAMEPAD_SOURCES) != 0 }
+        .filter { device -> device.sources and INPUT_DEVICE_GAMEPAD_JOYSTICK != 0 }
         .map { device ->
             PuGamepadInfo(
                 deviceId = device.id,
-                name = device.name?.takeIf { name -> name.isNotBlank() } ?: "Gamepad ${device.id}",
+                name = device.name?.takeIf { it.isNotBlank() } ?: "Gamepad ${device.id}",
             )
         }
         .sortedBy { gamepad -> gamepad.name.lowercase() }
 
     override fun isGamePadDevice(deviceId: Int): Boolean {
         val device = InputDevice.getDevice(deviceId) ?: return false
-        return (device.sources and GAMEPAD_SOURCES) != 0
+        return device.sources and INPUT_DEVICE_GAMEPAD_JOYSTICK != 0
     }
 
     private companion object {
-        val GAMEPAD_SOURCES = InputDevice.SOURCE_GAMEPAD or InputDevice.SOURCE_JOYSTICK
+        val INPUT_DEVICE_GAMEPAD_JOYSTICK = InputDevice.SOURCE_GAMEPAD or InputDevice.SOURCE_JOYSTICK
     }
 }

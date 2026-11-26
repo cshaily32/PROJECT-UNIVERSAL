@@ -109,14 +109,16 @@ internal fun ControlsScreenContent(
         title = "Touch controls",
         modifier = Modifier
             .focusRequester(focusRequester)
-            .onPreviewKeyEvent { event ->
+            .onPreviewKeyEvent { keyEvent ->
                 val capture = state.captureTarget
                 if (capture !is PuControlsState.CaptureTarget.Keyboard &&
                     capture !is PuControlsState.CaptureTarget.Gamepad
                 ) {
                     return@onPreviewKeyEvent false
                 }
-                if (event !is android.view.KeyEvent || event.getType() != android.view.KeyEvent.KEY_DOWN || event.getRepeatCount() != 0) {
+                // Use nativeKeyEvent to access KeyEvent properties
+                val key = keyEvent.nativeKeyEvent
+                if (key !is android.view.KeyEvent || key.getType() != android.view.KeyEvent.KEY_DOWN || key.getRepeatCount() != 0) {
                     return@onPreviewKeyEvent true
                 }
                 onAction(

@@ -117,7 +117,7 @@ internal fun ControlsScreenContent(
                     return@onPreviewKeyEvent false
                 }
                 val key = keyEvent.nativeKeyEvent ?: return@onPreviewKeyEvent true
-                if (key.getType() != android.view.KeyEvent.KEY_DOWN || key.getRepeatCount() != 0) {
+                if (key.action != android.view.KeyEvent.KEY_DOWN || key.repeatCount != 0) {
                     return@onPreviewKeyEvent true
                 }
                 onAction(

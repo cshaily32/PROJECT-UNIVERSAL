@@ -216,7 +216,7 @@ class PuGameRepository(
             ?.values
             ?.mapNotNull { (key, value) -> (value as? PuJsonValue.JsonObject)?.let { key to it as PuJsonValue } }
             ?.toMap()
-            ?: mutableMapOf<String, PuJsonValue.JsonObject>()
+            ?: mutableMapOf<String, PuJsonValue>()
             .toMutableMap()
         val metadata = File(record.rootPath).listFiles()?.sortedBy { it.name }?.joinToString("|") {
             "${it.name}:${it.length()}:${it.lastModified()}"

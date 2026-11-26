@@ -17,7 +17,8 @@ interface PuGamepadProbe {
 class AndroidPuGamepadManager : PuGamepadProbe {
     override fun listGamepads(): List<PuGamepadInfo> = InputDevice.getDeviceIds()
         .toList()
-        .mapNotNull { deviceId -> InputDevice.getDevice(deviceId) }
+        .map { InputDevice.getDevice(it) }
+        .filterNotNull()
         .filter { device -> (device.sources and INPUT_DEVICE_GAMEPAD_JOYSTICK) != 0 }
         .map { device ->
             PuGamepadInfo(

@@ -114,10 +114,10 @@ internal object PuControlProfileCodec {
     fun defaultBindings(): List<PuControlBinding> = PuControlAction.entries.map(::defaultBinding)
 
     private fun defaultBinding(action: PuControlAction): PuControlBinding = when (action) {
-        PuControlAction.UP -> binding(action, 0.28f, 0.54f, KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_BUTTON_DPAD_UP)
-        PuControlAction.DOWN -> binding(action, 0.28f, 0.82f, KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_BUTTON_DPAD_DOWN)
-        PuControlAction.LEFT -> binding(action, 0.14f, 0.68f, KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_BUTTON_DPAD_LEFT)
-        PuControlAction.RIGHT -> binding(action, 0.42f, 0.68f, KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_BUTTON_DPAD_RIGHT)
+        PuControlAction.UP -> binding(action, 0.28f, 0.54f, KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_UP)
+        PuControlAction.DOWN -> binding(action, 0.28f, 0.82f, KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_DPAD_DOWN)
+        PuControlAction.LEFT -> binding(action, 0.14f, 0.68f, KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_DPAD_LEFT)
+        PuControlAction.RIGHT -> binding(action, 0.42f, 0.68f, KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_DPAD_RIGHT)
         PuControlAction.CONFIRM -> binding(action, 0.82f, 0.72f, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_BUTTON_A)
         PuControlAction.CANCEL -> binding(action, 0.66f, 0.72f, KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_BUTTON_B)
         PuControlAction.MENU -> binding(action, 0.86f, 0.48f, KeyEvent.KEYCODE_MENU, KeyEvent.KEYCODE_BUTTON_START)

@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import sgyt.pu.core.launch.PuLaunchCoordinator
-import sgyt.pu.core.launch.PuLaunchPreparation
+import sgyt.pu.core.model.PuLaunchPreparation
 import sgyt.pu.core.library.PuGameLibrary
 import sgyt.pu.core.model.PuGameRecord
 import sgyt.pu.core.model.PuLaunchAssessment
@@ -108,9 +108,9 @@ class PuLaunchCheckViewModel(
                                 PuLaunchCheckState.ScreenState.NeedsRuntime(assessment, preparation.runtime)
                             }
                             is PuLaunchPreparation.Ready -> {
-                val ready = preparation as PuLaunchPreparation.Ready
-                PuLaunchCheckState.ScreenState.Ready(assessment, ready.runtime)
-            }
+                                val ready = preparation as PuLaunchPreparation.Ready
+                                PuLaunchCheckState.ScreenState.Ready(assessment, ready.runtime)
+                            }
                         },
                     )
                 }

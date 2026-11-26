@@ -514,13 +514,13 @@ fun BackgroundScreen(
                         icon = Icons.Outlined.Thermostat,
                         title = "Pause when hot",
                         detail = "Applies while optimization is open in the app",
-                        trailing = { Switch(checked = true, enabled = false) },
+                        trailing = { Switch(checked = true, enabled = false, onCheckedChange = {}) },
                     )
                     PuSettingRow(
                         icon = Icons.Outlined.WarningAmber,
                         title = "Pause on low battery",
                         detail = "Protects the phone during an optimization run",
-                        trailing = { Switch(checked = true, enabled = false) },
+                        trailing = { Switch(checked = true, enabled = false, onCheckedChange = {}) },
                     )
                 }
             }

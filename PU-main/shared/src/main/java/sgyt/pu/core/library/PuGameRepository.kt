@@ -214,9 +214,9 @@ class PuGameRepository(
         val cached = storage.readJson(cacheFile)
             ?.let { it as? PuJsonValue.JsonObject }
             ?.values
-            ?.mapNotNull { (key, value) -> (value as? PuJsonValue.JsonObject)?.let { key to it } }
+            ?.mapNotNull { (key, value) -> (value as? PuJsonValue.JsonObject)?.let { key to it as PuJsonValue } }
             ?.toMap()
-            ?: mutableMapOf()
+            ?: mutableMapOf<String, PuJsonValue.JsonObject>()
             .toMutableMap()
         val metadata = File(record.rootPath).listFiles()?.sortedBy { it.name }?.joinToString("|") {
             "${it.name}:${it.length()}:${it.lastModified()}"

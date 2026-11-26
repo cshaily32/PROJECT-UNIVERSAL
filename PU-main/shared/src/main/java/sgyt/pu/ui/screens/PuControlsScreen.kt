@@ -116,15 +116,14 @@ internal fun ControlsScreenContent(
                 ) {
                     return@onPreviewKeyEvent false
                 }
-                // Use nativeKeyEvent to access KeyEvent properties
-                val key = keyEvent.nativeKeyEvent
-                if (key !is android.view.KeyEvent || key.getType() != android.view.KeyEvent.KEY_DOWN || key.getRepeatCount() != 0) {
+                val key = keyEvent.nativeKeyEvent ?: return@onPreviewKeyEvent true
+                if (key.getType() != android.view.KeyEvent.KEY_DOWN || key.getRepeatCount() != 0) {
                     return@onPreviewKeyEvent true
                 }
                 onAction(
                     PuControlsAction.OnInputCaptured(
-                        keyCode = event.nativeKeyEvent.keyCode,
-                        deviceId = event.nativeKeyEvent.deviceId,
+                        keyCode = key.keyCode,
+                        deviceId = key.deviceId,
                     ),
                 )
                 true

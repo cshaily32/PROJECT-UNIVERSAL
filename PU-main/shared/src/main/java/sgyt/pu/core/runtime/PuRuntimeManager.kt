@@ -2,6 +2,7 @@ package sgyt.pu.core.runtime
 
 import sgyt.pu.core.archive.PuArchiveExtractor
 import sgyt.pu.core.json.PuJson
+import sgyt.pu.core.json.PuJsonObject
 import sgyt.pu.core.json.PuJsonValue
 import sgyt.pu.core.model.PuEngineType
 import sgyt.pu.core.model.PuInstalledRuntime
@@ -68,11 +69,15 @@ class PuRuntimeManager(
         val exact = candidates.filter { descriptor ->
             parsed.minor == null || descriptor.supportedMinors.isEmpty() || parsed.minor in descriptor.supportedMinors
         }
-        val selected = (exact.ifEmpty { candidates }).minByOrNull { descriptor ->
-            val nearest = descriptor.supportedMinors.minOfOrNull { minor -> kotlin.math.abs(minor - (parsed.minor ?: minor)) }
-                ?: 0
-            nearest to descriptor.catalogRevision
-        } ?: return null
+        val selected = (exact.ifEmpty { candidates }).minWithOrNull(
+            compareBy(
+                { descriptor ->
+                    descriptor.supportedMinors.minOfOrNull { minor -> kotlin.math.abs(minor - (parsed.minor ?: minor)) }
+                        ?: 0
+                },
+                { it.catalogRevision },
+            ),
+        ) ?: return null
         val exactMinor = parsed.minor != null && selected.supportedMinors.contains(parsed.minor)
         val warning = if (exactMinor) {
             null
@@ -238,17 +243,18 @@ class PuRuntimeManager(
     )
 
     private fun installedFromJson(json: PuJsonValue.JsonObject): PuInstalledRuntime? {
-        val runtimeId = json.string("runtimeId") ?: return null
-        val revision = json.long("revision") ?: return null
-        val installPath = json.string("installPath") ?: return null
+        val objectValue = PuJsonObject(json.values)
+        val runtimeId = objectValue.string("runtimeId") ?: return null
+        val revision = objectValue.long("revision") ?: return null
+        val installPath = objectValue.string("installPath") ?: return null
         return PuInstalledRuntime(
             runtimeId = runtimeId,
             revision = revision,
             installPath = installPath,
-            installedBytes = json.long("installedBytes") ?: 0,
-            installedAt = json.long("installedAt") ?: 0,
-            lastUsedAt = json.long("lastUsedAt") ?: 0,
-            verifiedSha256 = json.string("verifiedSha256").orEmpty(),
+            installedBytes = objectValue.long("installedBytes") ?: 0,
+            installedAt = objectValue.long("installedAt") ?: 0,
+            lastUsedAt = objectValue.long("lastUsedAt") ?: 0,
+            verifiedSha256 = objectValue.string("verifiedSha256").orEmpty(),
         )
     }
 

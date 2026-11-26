@@ -23,7 +23,7 @@ class AndroidPuGamepadManager : PuGamepadProbe {
         .map { device ->
             PuGamepadInfo(
                 deviceId = device.id,
-                name = device.name?.takeIf { it.isNotBlank() } ?: "Gamepad ${device.id}",
+                name = device.name?.toString()?.takeIf { it.isNotBlank() } ?: "Gamepad ${device.id}",
             )
         }
         .sortedBy { gamepad -> gamepad.name.lowercase() }

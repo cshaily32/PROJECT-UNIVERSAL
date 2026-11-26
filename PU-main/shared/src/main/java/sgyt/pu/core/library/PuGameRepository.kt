@@ -211,13 +211,12 @@ class PuGameRepository(
 
     private fun cacheDetection(record: PuGameRecord, detection: PuDetectionResult) {
         val cacheFile = File(storage.stateRoot, "detections.json")
-        val cached = storage.readJson(cacheFile)
+        val cached: MutableMap<String, PuJsonValue> = storage.readJson(cacheFile)
             ?.let { it as? PuJsonValue.JsonObject }
             ?.values
             ?.mapNotNull { (key, value) -> (value as? PuJsonValue.JsonObject)?.let { key to it as PuJsonValue } }
-            ?.toMap()
-            ?: mutableMapOf<String, PuJsonValue>()
-            .toMutableMap()
+            ?.toMutableMap()
+            ?: mutableMapOf()
         val metadata = File(record.rootPath).listFiles()?.sortedBy { it.name }?.joinToString("|") {
             "${it.name}:${it.length()}:${it.lastModified()}"
         }.orEmpty()

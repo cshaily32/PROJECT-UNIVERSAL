@@ -50,6 +50,7 @@ object PuJson {
     fun number(value: Double): PuJsonValue = PuJsonValue.JsonNumber(value)
     fun bool(value: Boolean): PuJsonValue = PuJsonValue.JsonBoolean(value)
     fun nullableString(value: String?): PuJsonValue = value?.let(::string) ?: PuJsonValue.JsonNull
+    fun nullableNumber(value: Long?): PuJsonValue = value?.let { number(it) } ?: PuJsonValue.JsonNull
 
     private fun writeValue(out: StringBuilder, value: PuJsonValue, pretty: Boolean, depth: Int) {
         when (value) {

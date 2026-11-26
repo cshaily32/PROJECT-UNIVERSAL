@@ -364,10 +364,10 @@ class PuOptimizer(
         "outputPath" to PuJson.nullableString(asset.outputPath),
         "outputSizeBytes" to PuJson.number(asset.outputSizeBytes),
         "sourceFingerprint" to PuJson.string(asset.sourceFingerprint),
-        "originalWidth" to PuJson.int(asset.originalWidth),
-        "originalHeight" to PuJson.int(asset.originalHeight),
-        "outputWidth" to PuJson.int(asset.outputWidth),
-        "outputHeight" to PuJson.int(asset.outputHeight),
+        "originalWidth" to PuJson.nullableNumber(asset.originalWidth?.toLong()),
+        "originalHeight" to PuJson.nullableNumber(asset.originalHeight?.toLong()),
+        "outputWidth" to PuJson.nullableNumber(asset.outputWidth?.toLong()),
+        "outputHeight" to PuJson.nullableNumber(asset.outputHeight?.toLong()),
         "status" to PuJson.string(asset.status.name),
     )
 

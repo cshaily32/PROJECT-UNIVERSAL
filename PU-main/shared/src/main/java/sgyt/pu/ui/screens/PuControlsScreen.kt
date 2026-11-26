@@ -495,10 +495,6 @@ private fun keyLabel(keyCode: Int?): String {
         AndroidKeyEvent.KEYCODE_BUTTON_A -> "A"
         AndroidKeyEvent.KEYCODE_BUTTON_B -> "B"
         AndroidKeyEvent.KEYCODE_BUTTON_START -> "Start"
-        AndroidKeyEvent.KEYCODE_DPAD_UP -> "D-pad up"
-        AndroidKeyEvent.KEYCODE_DPAD_DOWN -> "D-pad down"
-        AndroidKeyEvent.KEYCODE_DPAD_LEFT -> "D-pad left"
-        AndroidKeyEvent.KEYCODE_DPAD_RIGHT -> "D-pad right"
         else -> AndroidKeyEvent.keyCodeToString(keyCode).removePrefix("KEYCODE_")
     }
 }

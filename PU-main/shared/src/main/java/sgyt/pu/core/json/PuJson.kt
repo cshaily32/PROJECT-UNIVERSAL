@@ -26,7 +26,7 @@ class PuJsonObject(values: Map<String, PuJsonValue>) {
     fun double(key: String): Double? = (values[key] as? PuJsonValue.JsonNumber)?.value
     fun boolean(key: String): Boolean? = (values[key] as? PuJsonValue.JsonBoolean)?.value
     fun array(key: String): List<PuJsonValue> = (values[key] as? PuJsonValue.JsonArray)?.values.orEmpty()
-    fun object(key: String): PuJsonObject? = (values[key] as? PuJsonValue.JsonObject)?.let(::PuJsonObject)
+    fun jsonObject(key: String): PuJsonObject? = (values[key] as? PuJsonValue.JsonObject)?.let(::PuJsonObject)
 }
 
 class PuJsonArray(values: List<PuJsonValue>) {

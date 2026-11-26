@@ -108,7 +108,8 @@ class PuLaunchCheckViewModel(
                                 PuLaunchCheckState.ScreenState.NeedsRuntime(assessment, preparation.runtime)
                             }
                             is PuLaunchPreparation.Ready -> {
-                                PuLaunchCheckState.ScreenState.Ready(assessment, preparation.runtime)
+                                val ready = preparation as PuLaunchPreparation.Ready
+                                PuLaunchCheckState.ScreenState.Ready(assessment, ready.runtime)
                             }
                         },
                     )

@@ -122,7 +122,7 @@ class PuGameDetector {
         val systemJson = lowerPaths.firstOrNull { it == "www/data/system.json" || it.endsWith("/www/data/system.json") }
         val packageJson = lowerPaths.firstOrNull { it == "www/package.json" || it.endsWith("/www/package.json") }
         if (systemJson != null || packageJson != null) {
-            val packageText = packageJson?.let { path -> readText(File(root, path), 256 * 1024).orEmpty() }
+            val packageText = packageJson?.let { path -> readText(File(root, path), 256 * 1024, 256 * 1024).orEmpty() }
             val isMz = packageText.contains("\"RPGMZ\"", ignoreCase = true)
             val isMv = packageText.contains("\"RPGMV\"", ignoreCase = true)
             val title = findJsonString(packageText, "name")

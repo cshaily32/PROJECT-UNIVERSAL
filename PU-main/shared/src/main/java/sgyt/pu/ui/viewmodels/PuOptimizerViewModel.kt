@@ -143,7 +143,7 @@ class PuOptimizerViewModel(
                 }
                 val profile = game.selectedProfile ?: recommendedProfile
                 val device = withContext(Dispatchers.Default) { deviceProbe.snapshot() }
-                optimizationBlockReason(device)?.let { reason ->
+                device.optimizationBlockReason()?.let { reason ->
                     _state.update {
                         it.copy(phase = PuOptimizerPhase.PAUSED, errorMessage = reason)
                     }

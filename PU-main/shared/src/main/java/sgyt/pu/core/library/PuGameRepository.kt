@@ -8,6 +8,7 @@ import android.provider.DocumentsContract
 import sgyt.pu.core.archive.PuArchiveExtractor
 import sgyt.pu.core.detection.PuGameDetector
 import sgyt.pu.core.json.PuJson
+import sgyt.pu.core.json.PuJsonObject
 import sgyt.pu.core.json.PuJsonValue
 import sgyt.pu.core.model.PuCompatibilityEstimate
 import sgyt.pu.core.model.PuDetectionResult
@@ -213,9 +214,10 @@ class PuGameRepository(
         val cached = storage.readJson(cacheFile)
             ?.let { it as? PuJsonValue.JsonObject }
             ?.values
-            ?.mapValues { (_, value) -> value as? PuJsonValue.JsonObject }
-            ?.toMutableMap()
+            ?.mapNotNull { (key, value) -> (value as? PuJsonValue.JsonObject)?.let { key to it } }
+            ?.toMap()
             ?: mutableMapOf()
+            .toMutableMap()
         val metadata = File(record.rootPath).listFiles()?.sortedBy { it.name }?.joinToString("|") {
             "${it.name}:${it.length()}:${it.lastModified()}"
         }.orEmpty()
@@ -307,8 +309,9 @@ class PuGameRepository(
     )
 
     private fun gameFromJson(json: PuJsonValue.JsonObject): PuGameRecord? {
-        val id = json.string("id") ?: return null
-        val rootPath = json.string("rootPath") ?: return null
+        val objectValue = PuJsonObject(json.values)
+        val id = objectValue.string("id") ?: return null
+        val rootPath = objectValue.string("rootPath") ?: return null
         return PuGameRecord(
             id = id,
             rootPath = rootPath,

@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.BatteryCharging
 import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Cloud
@@ -47,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import sgyt.pu.model.PuEditionConfig
 import sgyt.pu.model.PuSampleData
+import sgyt.pu.ui.components.NoticeTone
 import sgyt.pu.ui.components.PuBody
 import sgyt.pu.ui.components.PuEditionBadge
 import sgyt.pu.ui.components.PuGlassCard
@@ -480,13 +480,13 @@ fun BackgroundScreen(
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                 if (config.backgroundWorkEnabled) {
                     PuSettingRow(
-                        icon = Icons.Outlined.BatteryCharging,
+                        icon = Icons.Outlined.WarningAmber,
                         title = "Optimize while charging",
                         detail = "Continue only while the phone is connected to power",
                         trailing = { Switch(checked = charging, onCheckedChange = { charging = it }) },
                     )
                     PuSettingRow(
-                        icon = Icons.Outlined.BatteryCharging,
+                        icon = Icons.Outlined.WarningAmber,
                         title = "Pause on low battery",
                         detail = "Stop background work below the battery level you choose",
                         trailing = { Switch(checked = lowBattery, onCheckedChange = { lowBattery = it }) },
@@ -505,7 +505,7 @@ fun BackgroundScreen(
                     )
                 } else {
                     PuSettingRow(
-                        icon = Icons.Outlined.BatteryCharging,
+                        icon = Icons.Outlined.WarningAmber,
                         title = "Optimize while idle",
                         detail = "Not available in PU Lite",
                         trailing = { PuEditionBadge(config) },
@@ -514,13 +514,13 @@ fun BackgroundScreen(
                         icon = Icons.Outlined.Thermostat,
                         title = "Pause when hot",
                         detail = "Applies while optimization is open in the app",
-                        trailing = { Switch(defaultChecked = true) },
+                        trailing = { Switch(checked = true, enabled = false) },
                     )
                     PuSettingRow(
-                        icon = Icons.Outlined.BatteryCharging,
+                        icon = Icons.Outlined.WarningAmber,
                         title = "Pause on low battery",
                         detail = "Protects the phone during an optimization run",
-                        trailing = { Switch(defaultChecked = true) },
+                        trailing = { Switch(checked = true, enabled = false) },
                     )
                 }
             }

@@ -23,7 +23,7 @@ import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.FolderOpen
-import androidx.compose.material.icons.outlined.HardDrive
+
 import androidx.compose.material.icons.outlined.Monitor
 import androidx.compose.material.icons.outlined.Security
 import androidx.compose.material.icons.outlined.WarningAmber
@@ -514,7 +514,7 @@ private fun PuRuntimeDownloadScreenContent(
                                 trailing = { Icon(Icons.Outlined.Check, contentDescription = null) },
                             )
                             PuSettingRow(
-                                icon = Icons.Outlined.HardDrive,
+                                icon = Icons.Outlined.WarningAmber,
                                 title = "Shared installation",
                                 detail = "One copy works across every compatible game",
                                 trailing = { Icon(Icons.Outlined.Check, contentDescription = null) },

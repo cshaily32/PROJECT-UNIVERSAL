@@ -17,7 +17,7 @@ interface PuGamepadProbe {
 class AndroidPuGamepadManager : PuGamepadProbe {
     override fun listGamepads(): List<PuGamepadInfo> = InputDevice.getDeviceIds()
         .mapNotNull { deviceId -> InputDevice.getDevice(deviceId) }
-        .filter { device -> device.sources and GAMEPAD_SOURCES != 0 }
+        .filter { device -> (device.sources and GAMEPAD_SOURCES) != 0 }
         .map { device ->
             PuGamepadInfo(
                 deviceId = device.id,
@@ -28,7 +28,7 @@ class AndroidPuGamepadManager : PuGamepadProbe {
 
     override fun isGamePadDevice(deviceId: Int): Boolean {
         val device = InputDevice.getDevice(deviceId) ?: return false
-        return device.sources and GAMEPAD_SOURCES != 0
+        return (device.sources and GAMEPAD_SOURCES) != 0
     }
 
     private companion object {

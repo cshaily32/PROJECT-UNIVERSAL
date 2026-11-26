@@ -18,7 +18,8 @@ import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material.icons.outlined.SportsEsports
-import androidx.compose.material.icons.outlined.Wrench
+import androidx.compose.material.icons.outlined.WarningAmber
+
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -223,7 +224,7 @@ internal fun PuGameDetailsScreenContent(
                     ) {
                         Surface(shape = CircleShape, color = MaterialTheme.colorScheme.secondary) {
                             Icon(
-                                Icons.Outlined.Wrench,
+                                Icons.Outlined.WarningAmber,
                                 contentDescription = null,
                                 modifier = Modifier.padding(10.dp).size(18.dp),
                             )
@@ -256,7 +257,7 @@ internal fun PuGameDetailsScreenContent(
                             onClick = onSaves,
                         )
                         PuSettingRow(
-                            icon = Icons.Outlined.Wrench,
+                            icon = Icons.Outlined.WarningAmber,
                             title = "Optimize assets",
                             detail = if (state.cacheSizeBytes > 0) {
                                 "${formatBytes(state.cacheSizeBytes)} in the current cache"

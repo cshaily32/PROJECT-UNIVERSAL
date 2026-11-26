@@ -37,7 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.focusable
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.pointer.pointerInput
@@ -110,7 +109,6 @@ internal fun ControlsScreenContent(
         title = "Touch controls",
         modifier = Modifier
             .focusRequester(focusRequester)
-            .focusable()
             .onPreviewKeyEvent { event ->
                 val capture = state.captureTarget
                 if (capture !is PuControlsState.CaptureTarget.Keyboard &&
@@ -118,7 +116,7 @@ internal fun ControlsScreenContent(
                 ) {
                     return@onPreviewKeyEvent false
                 }
-                if (event.type != KeyEventType.KeyDown || event.repeatCount != 0) {
+                if (event !is android.view.KeyEvent || event.getType() != android.view.KeyEvent.KEY_DOWN || event.getRepeatCount() != 0) {
                     return@onPreviewKeyEvent true
                 }
                 onAction(

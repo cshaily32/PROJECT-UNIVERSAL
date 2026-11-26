@@ -386,7 +386,7 @@ class PuOptimizer(
         removeUnretained(assetsRoot)
     }
 
-    private fun fingerprint(file: File): String {
+    internal fun fingerprint(file: File): String {
         return if (file.length() <= 256L * 1024 * 1024) {
             "sha256:${PuCrypto.sha256(file)}"
         } else {

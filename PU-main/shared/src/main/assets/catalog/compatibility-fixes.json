@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "revision": 1,
+  "profiles": [
+    {
+      "id": "renpy-8-low-memory",
+      "title": "Ren'Py 8.x on low-memory devices",
+      "engine": "RENPY",
+      "versionFamily": "8",
+      "revision": 1,
+      "settings": {
+        "imageCacheMb": "256",
+        "rollbackHistory": "16",
+        "predictiveLoading": "false",
+        "renderMode": "low-memory"
+      }
+    },
+    {
+      "id": "renpy-7-low-memory",
+      "title": "Ren'Py 7.x on low-memory devices",
+      "engine": "RENPY",
+      "versionFamily": "7",
+      "revision": 1,
+      "settings": {
+        "imageCacheMb": "192",
+        "rollbackHistory": "12",
+        "predictiveLoading": "false",
+        "renderMode": "low-memory"
+      }
+    },
+    {
+      "id": "rpg-maker-mv-stable-webview",
+      "title": "RPG Maker MV stable WebView",
+      "engine": "RPG_MAKER_MV",
+      "versionFamily": null,
+      "revision": 1,
+      "settings": {
+        "webViewMode": "stable",
+        "renderMode": "compatible"
+      }
+    },
+    {
+      "id": "rpg-maker-mz-stable-webview",
+      "title": "RPG Maker MZ stable WebView",
+      "engine": "RPG_MAKER_MZ",
+      "versionFamily": null,
+      "revision": 1,
+      "settings": {
+        "webViewMode": "stable",
+        "renderMode": "compatible"
+      }
+    },
+    {
+      "id": "generic-windowed-render",
+      "title": "Generic windowed rendering fallback",
+      "engine": "UNKNOWN",
+      "versionFamily": null,
+      "revision": 1,
+      "settings": {
+        "windowMode": "windowed",
+        "renderMode": "software"
+      }
+    }
+  ]
+}

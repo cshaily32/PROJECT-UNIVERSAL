@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1240 1240" role="img" aria-labelledby="title">
+  <title id="title">PU Plus app icon</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#100d35"/>
+      <stop offset=".48" stop-color="#070722"/>
+      <stop offset="1" stop-color="#080b2c"/>
+    </linearGradient>
+    <radialGradient id="bgLight" cx="26%" cy="7%" r="90%">
+      <stop offset="0" stop-color="#402080" stop-opacity=".58"/>
+      <stop offset=".58" stop-color="#19104d" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#080820" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="pGradient" x1=".12" y1=".08" x2=".91" y2=".88">
+      <stop offset="0" stop-color="#edcaff"/>
+      <stop offset=".18" stop-color="#d28bff"/>
+      <stop offset=".42" stop-color="#8247f5"/>
+      <stop offset=".67" stop-color="#20b9f4"/>
+      <stop offset="1" stop-color="#72f1f5"/>
+    </linearGradient>
+    <linearGradient id="foldGradient" x1=".1" y1=".12" x2=".92" y2=".9">
+      <stop offset="0" stop-color="#e8c9ff" stop-opacity=".92"/>
+      <stop offset=".48" stop-color="#a78bff" stop-opacity=".84"/>
+      <stop offset="1" stop-color="#35b5f3" stop-opacity=".78"/>
+    </linearGradient>
+    <linearGradient id="plusGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f0c5ff"/>
+      <stop offset=".42" stop-color="#b77aff"/>
+      <stop offset=".73" stop-color="#4c9cff"/>
+      <stop offset="1" stop-color="#00dfe9"/>
+    </linearGradient>
+    <clipPath id="tile"><rect width="1240" height="1240" rx="150"/></clipPath>
+  </defs>
+
+  <g clip-path="url(#tile)">
+    <rect width="1240" height="1240" fill="url(#bg)"/>
+    <rect width="1240" height="1240" fill="url(#bgLight)"/>
+    <rect x="1.5" y="1.5" width="1237" height="1237" rx="148.5"
+          fill="none" stroke="#5140a2" stroke-opacity=".38" stroke-width="3"/>
+
+    <!-- Original ribbon-P silhouette and triangular play counter -->
+    <path fill="url(#pGradient)" fill-rule="evenodd" d="
+      M369 861
+      L369 440
+      C369 282 453 172 584 172
+      L694 172
+      C822 172 909 260 909 387
+      C909 515 817 632 684 632
+      L542 632
+      L542 694
+      C542 763 508 785 455 817
+      Z
+
+      M542 328
+      C542 302 557 292 581 306
+      L738 399
+      C767 416 767 445 738 462
+      L581 553
+      C557 567 542 557 542 531
+      Z"/>
+
+    <!-- Translucent diagonal fold at the foot of the P -->
+    <path d="
+      M369 861
+      L369 763
+      C369 712 421 672 482 638
+      L542 604
+      L542 694
+      C542 763 508 785 455 817
+      Z" fill="url(#foldGradient)"/>
+    <path d="M371 858 C385 790 438 749 542 689"
+          fill="none" stroke="#f3ddff" stroke-opacity=".48"
+          stroke-width="2.2" stroke-linecap="round"/>
+
+    <!-- Rounded gradient plus, positioned above-right of the P -->
+    <path fill="url(#plusGradient)" d="
+      M936 175
+      C948 175 957 184 957 196
+      L957 229
+      L990 229
+      C1002 229 1011 238 1011 250
+      C1011 262 1002 271 990 271
+      L957 271
+      L957 305
+      C957 317 948 326 936 326
+      C924 326 915 317 915 305
+      L915 271
+      L881 271
+      C869 271 860 262 860 250
+      C860 238 869 229 881 229
+      L915 229
+      L915 196
+      C915 184 924 175 936 175Z"/>
+  </g>
+</svg>

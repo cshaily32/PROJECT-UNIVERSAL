@@ -1,0 +1,26 @@
+# Android / Gradle
+**/.gradle/
+**/build/
+local.properties
+*.apk
+*.aab
+*.jks
+*.keystore
+keystore.properties
+
+# Logs
+*.log
+
+# IDE and OS files
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# Local tooling, copied templates, and session attachments
+.agents/
+.claude/
+agent/
+attachments/
+ui-templates/
+skills-lock.json

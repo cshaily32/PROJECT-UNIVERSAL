@@ -2,6 +2,7 @@ package sgyt.pu.core.runtime
 
 import android.content.Context
 import android.os.StatFs
+import sgyt.pu.core.model.DEFAULT_BUFFER_SIZE
 import sgyt.pu.core.security.PuCrypto
 import java.io.BufferedInputStream
 import java.io.File

@@ -8,6 +8,7 @@ import java.security.Signature
 import java.security.spec.X509EncodedKeySpec
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
+import sgyt.pu.core.model.DEFAULT_BUFFER_SIZE
 
 /** Cryptographic checks used before any downloaded PU package is executed. */
 object PuCrypto {

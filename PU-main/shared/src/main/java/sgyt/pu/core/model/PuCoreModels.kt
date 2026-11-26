@@ -3,6 +3,8 @@ package sgyt.pu.core.model
 import sgyt.pu.model.PuEdition
 import sgyt.pu.model.PuProfile
 
+const val DEFAULT_BUFFER_SIZE = 8192
+
 enum class PuEngineType {
     RENPY,
     RPG_MAKER_MV,

@@ -1,5 +1,6 @@
 package sgyt.pu.core.archive
 
+import sgyt.pu.core.model.DEFAULT_BUFFER_SIZE
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File

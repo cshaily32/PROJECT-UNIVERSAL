@@ -92,7 +92,7 @@ class PuControlProfileCodecTest {
                     touchY = 2f,
                     touchRadius = 0f,
                     keyboardKeyCode = KeyEvent.KEYCODE_DPAD_UP,
-                    gamepadButton = KeyEvent.KEYCODE_BUTTON_DPAD_UP,
+                    gamepadButton = KeyEvent.KEYCODE_DPAD_UP,
                 ),
             ),
             updatedAt = 0,

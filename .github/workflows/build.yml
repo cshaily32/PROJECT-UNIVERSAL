@@ -1,0 +1,55 @@
+name: Android CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build PU Lite and PU Plus
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.11.1"
+
+      - name: Test shared code and build both APKs
+        working-directory: PU-main
+        run: gradle --no-daemon --stacktrace :shared:testDebugUnitTest :lite:assembleDebug :plus:assembleDebug
+
+      - name: Upload PU Lite APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: pu-lite-debug-apk
+          path: PU-main/lite/build/outputs/apk/debug/lite-debug.apk
+          if-no-files-found: error
+
+      - name: Upload PU Plus APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: pu-plus-debug-apk
+          path: PU-main/plus/build/outputs/apk/debug/plus-debug.apk
+          if-no-files-found: error

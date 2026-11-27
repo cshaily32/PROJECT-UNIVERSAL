@@ -69,15 +69,15 @@ class PuRuntimeManager(
         val exact = candidates.filter { descriptor ->
             parsed.minor == null || descriptor.supportedMinors.isEmpty() || parsed.minor in descriptor.supportedMinors
         }
-        val selected = (exact.ifEmpty { candidates }).minWithOrNull(
-            compareBy(
-                { descriptor ->
-                    descriptor.supportedMinors.minOfOrNull { minor -> kotlin.math.abs(minor - (parsed.minor ?: minor)) }
-                        ?: 0
-                },
-                { it.catalogRevision },
-            ),
-        ) ?: return null
+        val pool = exact.ifEmpty { candidates }
+        val comparator = compareBy(
+            { descriptor: PuRuntimeDescriptor ->
+                descriptor.supportedMinors.minOfOrNull { minor -> kotlin.math.abs(minor - (parsed.minor ?: minor)) }
+                    ?: 0
+            },
+            { descriptor: PuRuntimeDescriptor -> descriptor.catalogRevision },
+        )
+        val selected = pool.sortedWith(comparator).firstOrNull() ?: return null
         val exactMinor = parsed.minor != null && selected.supportedMinors.contains(parsed.minor)
         val warning = if (exactMinor) {
             null

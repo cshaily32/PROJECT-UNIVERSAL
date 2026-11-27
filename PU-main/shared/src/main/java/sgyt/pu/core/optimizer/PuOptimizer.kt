@@ -386,15 +386,15 @@ class PuOptimizer(
         removeUnretained(assetsRoot)
     }
 
-    internal fun fingerprint(file: File): String {
-        return if (file.length() <= 256L * 1024 * 1024) {
-            "sha256:${PuCrypto.sha256(file)}"
-        } else {
-            "meta:${file.length()}:${file.lastModified()}"
-        }
-    }
-
     private fun File.invariantPath(): String = path.replace(File.separatorChar, '/')
+}
+
+private fun fingerprint(file: File): String {
+    return if (file.length() <= 256L * 1024 * 1024) {
+        "sha256:${PuCrypto.sha256(file)}"
+    } else {
+        "meta:${file.length()}:${file.lastModified()}"
+    }
 }
 
 private class UnsupportedMediaOptimizer : PuMediaOptimizer {

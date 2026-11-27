@@ -214,7 +214,7 @@ class PuGameRepository(
         val cached: MutableMap<String, PuJsonValue> = (storage.readJson(cacheFile)
             ?.let { it as? PuJsonValue.JsonObject }
             ?.values
-            ?.mapNotNull { (key, value) -> (value as? PuJsonValue.JsonObject)?.let { key to it as PuJsonValue }}
+            ?.mapNotNull { entry -> (entry.value as? PuJsonValue.JsonObject)?.let { entry.key to it as PuJsonValue } }
             ?: emptyList())
             .toMap()
             .toMutableMap()

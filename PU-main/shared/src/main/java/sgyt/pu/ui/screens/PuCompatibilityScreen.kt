@@ -174,8 +174,8 @@ internal fun PuCompatibilityScreenContent(
                                     Column(modifier = Modifier.weight(1f)) {
                                         PuLabel(profile.title)
                                         PuBody(
-                                            text = profile.settings.entries.joinToString(" · ") { (key, value) ->
-                                                "$key=$value"
+                                            text = profile.settings.entries.joinToString(" · ") { entry ->
+                                                "${entry.key}=${entry.value}"
                                             }.ifBlank { "Runtime compatibility settings" },
                                             modifier = Modifier.padding(top = 4.dp),
                                         )

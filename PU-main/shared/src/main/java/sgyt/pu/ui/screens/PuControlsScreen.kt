@@ -1,6 +1,7 @@
 package sgyt.pu.ui.screens
 
-import android.view.KeyEvent as AndroidKeyEvent
+import android.view.KeyEvent
+import android.view.KeyEvent.KEY_DOWN
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -117,7 +118,7 @@ internal fun ControlsScreenContent(
                     return@onPreviewKeyEvent false
                 }
                 val key = keyEvent.nativeKeyEvent ?: return@onPreviewKeyEvent true
-                if (key.action != AndroidKeyEvent.KEY_DOWN || key.repeatCount != 0) {
+                if (key.action != KEY_DOWN || key.repeatCount != 0) {
                     return@onPreviewKeyEvent true
                 }
                 onAction(
@@ -485,17 +486,17 @@ private fun TouchControlPreview(
 private fun keyLabel(keyCode: Int?): String {
     if (keyCode == null) return "Not assigned"
     return when (keyCode) {
-        AndroidKeyEvent.KEYCODE_DPAD_UP -> "Up"
-        AndroidKeyEvent.KEYCODE_DPAD_DOWN -> "Down"
-        AndroidKeyEvent.KEYCODE_DPAD_LEFT -> "Left"
-        AndroidKeyEvent.KEYCODE_DPAD_RIGHT -> "Right"
-        AndroidKeyEvent.KEYCODE_ENTER -> "Enter"
-        AndroidKeyEvent.KEYCODE_BACK -> "Back"
-        AndroidKeyEvent.KEYCODE_MENU -> "Menu"
-        AndroidKeyEvent.KEYCODE_BUTTON_A -> "A"
-        AndroidKeyEvent.KEYCODE_BUTTON_B -> "B"
-        AndroidKeyEvent.KEYCODE_BUTTON_START -> "Start"
-        else -> AndroidKeyEvent.keyCodeToString(keyCode).removePrefix("KEYCODE_")
+        KeyEvent.KEYCODE_DPAD_UP -> "Up"
+        KeyEvent.KEYCODE_DPAD_DOWN -> "Down"
+        KeyEvent.KEYCODE_DPAD_LEFT -> "Left"
+        KeyEvent.KEYCODE_DPAD_RIGHT -> "Right"
+        KeyEvent.KEYCODE_ENTER -> "Enter"
+        KeyEvent.KEYCODE_BACK -> "Back"
+        KeyEvent.KEYCODE_MENU -> "Menu"
+        KeyEvent.KEYCODE_BUTTON_A -> "A"
+        KeyEvent.KEYCODE_BUTTON_B -> "B"
+        KeyEvent.KEYCODE_BUTTON_START -> "Start"
+        else -> KeyEvent.keyCodeToString(keyCode).removePrefix("KEYCODE_")
     }
 }
 

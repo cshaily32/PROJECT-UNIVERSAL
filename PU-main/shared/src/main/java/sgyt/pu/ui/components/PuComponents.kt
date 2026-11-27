@@ -21,9 +21,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.LibraryBooks
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.LibraryBooks
 import androidx.compose.material.icons.outlined.Layers
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.WarningAmber
@@ -440,7 +440,7 @@ fun PuProgressBar(progress: Float, modifier: Modifier = Modifier) {
 }
 
 enum class PuMainTab(val route: String, val label: String, val icon: ImageVector) {
-    LIBRARY("library", "Library", Icons.Outlined.LibraryBooks),
+    LIBRARY("library", "Library", Icons.AutoMirrored.Outlined.LibraryBooks),
     RUNTIMES("runtimes", "Runtimes", Icons.Outlined.Layers),
     SETTINGS("settings", "Settings", Icons.Outlined.Settings),
 }

@@ -42,7 +42,7 @@ class PuRuntimeManager(
     @Synchronized
     override fun listInstalled(): List<PuInstalledRuntime> {
         val root = storage.readJson(installationsFile) as? PuJsonValue.JsonObject ?: return emptyList()
-        return root.values.mapNotNull { value -> installedFromJson(value as? PuJsonValue.JsonObject ?: return@mapNotNull null) }
+        return PuInstalledRuntimeCodec.decodeAll(root)
     }
 
     @Synchronized
@@ -181,39 +181,11 @@ class PuRuntimeManager(
     private fun familyMatches(
         engine: PuEngineType,
         descriptor: PuRuntimeDescriptor,
-        version: ParsedVersion,
-    ): Boolean {
-        if (engine != PuEngineType.RENPY) {
-            return descriptor.versionFamily.isBlank() || descriptor.versionFamily.equals(engine.name, ignoreCase = true)
-        }
-        if (version.family == null) return false
-        val descriptorFamily = descriptor.versionFamily.trim()
-        if (descriptorFamily.isBlank()) return false
-        if (descriptorFamily.contains('-')) {
-            val parts = descriptorFamily.split('-')
-            val low = parts.firstOrNull()?.trim()?.toDoubleOrNull()
-            val high = parts.getOrNull(1)?.trim()?.toDoubleOrNull()
-            val numeric = version.family?.toDoubleOrNull()
-            return low != null && high != null && numeric != null && numeric in low..high
-        }
-        return descriptorFamily == version.family
-    }
+        version: PuRuntimeVersionMatcher.ParsedVersion,
+    ): Boolean = PuRuntimeVersionMatcher.matches(engine, descriptor.versionFamily, version)
 
-    private fun parseVersion(raw: String): ParsedVersion {
-        val match = Regex("(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?").find(raw) ?: return ParsedVersion(null, null)
-        val major = match.groupValues[1].toInt()
-        val minor = match.groupValues.getOrNull(2)?.toIntOrNull()
-        val patch = match.groupValues.getOrNull(3)?.toIntOrNull()
-        val family = when {
-            major == 8 && minor != null && minor >= 6 -> "8.6"
-            major == 8 && minor != null && minor >= 4 -> "8.4-8.5"
-            major == 8 -> "8.0-8.3"
-            major == 7 -> "7.x"
-            major == 6 -> "6.x"
-            else -> "$major.x"
-        }
-        return ParsedVersion(family, minor)
-    }
+    private fun parseVersion(raw: String): PuRuntimeVersionMatcher.ParsedVersion =
+        PuRuntimeVersionMatcher.parse(raw)
 
     private fun saveInstalled(installation: PuInstalledRuntime) {
         val installations = listInstalled().filterNot {
@@ -223,16 +195,19 @@ class PuRuntimeManager(
     }
 
     private fun saveInstallations(installations: List<PuInstalledRuntime>) {
-        storage.writeJson(
-            installationsFile,
-            PuJsonValue.JsonObject(
-                installations.associateBy { "${it.runtimeId}:${it.revision}" }
-                    .mapValues { installedToJson(it.value) },
-            ),
-        )
+        storage.writeJson(installationsFile, PuInstalledRuntimeCodec.encodeAll(installations))
     }
+}
 
-    private fun installedToJson(installation: PuInstalledRuntime): PuJsonValue = PuJson.obj(
+/**
+ * Converts installed-runtime records to and from their persisted JSON form.
+ *
+ * `Map.mapNotNull` hands the lambda a `Map.Entry`, not the value, so every map
+ * read here goes through `entry.value` explicitly. Reading the entry itself as
+ * a JSON object always fails, which silently empties the installed list.
+ */
+internal object PuInstalledRuntimeCodec {
+    fun encode(installation: PuInstalledRuntime): PuJsonValue.JsonObject = PuJson.obj(
         "runtimeId" to PuJson.string(installation.runtimeId),
         "revision" to PuJson.number(installation.revision),
         "installPath" to PuJson.string(installation.installPath),
@@ -242,7 +217,13 @@ class PuRuntimeManager(
         "verifiedSha256" to PuJson.string(installation.verifiedSha256),
     )
 
-    private fun installedFromJson(json: PuJsonValue.JsonObject): PuInstalledRuntime? {
+    fun encodeAll(installations: List<PuInstalledRuntime>): PuJsonValue.JsonObject =
+        PuJsonValue.JsonObject(
+            installations.associateBy { "${it.runtimeId}:${it.revision}" }
+                .mapValues { entry -> encode(entry.value) },
+        )
+
+    fun decode(json: PuJsonValue.JsonObject): PuInstalledRuntime? {
         val objectValue = PuJsonObject(json.values)
         val runtimeId = objectValue.string("runtimeId") ?: return null
         val revision = objectValue.long("revision") ?: return null
@@ -258,8 +239,8 @@ class PuRuntimeManager(
         )
     }
 
-    private data class ParsedVersion(
-        val family: String?,
-        val minor: Int?,
-    )
+    fun decodeAll(root: PuJsonValue.JsonObject): List<PuInstalledRuntime> =
+        root.values.entries.mapNotNull { entry ->
+            decode(entry.value as? PuJsonValue.JsonObject ?: return@mapNotNull null)
+        }
 }

@@ -1,7 +1,6 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 val releaseStoreFile = providers.gradleProperty("PU_RELEASE_STORE_FILE")
@@ -24,7 +23,7 @@ val compatibilityPublicKey = providers.gradleProperty("PU_COMPATIBILITY_PUBLIC_K
 
 android {
     namespace = "sgyt.pu.plus"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "SGYT.PU_PLUS"
@@ -79,6 +78,10 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.10"
     }
 
     packaging {

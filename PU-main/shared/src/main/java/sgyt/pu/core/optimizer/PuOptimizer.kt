@@ -86,7 +86,7 @@ class PuOptimizer(
             val previous = previousAssets[relativePath]
             val target = File(assetsRoot, relativePath)
             val reusable = previous != null && previous.sourceFingerprint == fingerprint && previous.sourceSizeBytes == source.length()
-            val asset = if (reusable && previous.outputPath != null && File(previous.outputPath).isFile) {
+            val asset = if (previous != null && reusable && previous.outputPath != null && File(previous.outputPath).isFile) {
                 previous
             } else {
                 optimizeOne(source, target, relativePath, fingerprint, settings)

@@ -83,7 +83,7 @@ class PuDownloader(
                         if (cancellation.get()) throw IOException("Download cancelled")
                         val read = input.read(buffer)
                         if (read < 0) break
-                        output.write(buffer, 0, read)
+                        target.write(buffer, 0, read)
                         downloaded += read
                         onProgress(PuDownloadProgress(downloaded, total, existing))
                     }

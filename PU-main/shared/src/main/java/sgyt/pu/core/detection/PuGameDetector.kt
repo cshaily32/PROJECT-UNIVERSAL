@@ -24,7 +24,7 @@ class PuGameDetector {
             path == "game" || path.startsWith("game/") || path == "renpy" || path.startsWith("renpy/")
         }
         if (renPyEvidence.isNotEmpty()) {
-            val version = detectRenPyVersion(root, files)
+            val version = detectRenPyVersion(files)
             val title = detectRenPyTitle(root) ?: root.name
             return result(
                 engine = PuEngineType.RENPY,
@@ -170,7 +170,7 @@ class PuGameDetector {
         return null
     }
 
-    private fun detectRenPyVersion(root: File, files: List<File>): PuVersion {
+    private fun detectRenPyVersion(files: List<File>): PuVersion {
         val candidates = files.asSequence()
             .filter { file ->
                 val name = file.name.lowercase(Locale.ROOT)

@@ -18,13 +18,12 @@ Lite and Plus are separate Android application modules with different applicatio
 
 ## Development requirements
 
-Add the **Android development stack in PocketDev Settings** before building. The project expects:
+The project is built with the following toolchain:
 
 - JDK 17
-- Gradle 8.9 or newer
-- Android SDK 35 and build tools
-
-This PocketDev runtime does not include Gradle, Java, the Android SDK, or aapt2. The Android project therefore has not been compiled here, and the commands below are not build-verified in this environment.
+- Gradle 8.13 or newer (8.14.3 is used in CI)
+- Android SDK 36 with build tools 35.0.0
+- Android Gradle Plugin 8.11.0, Kotlin 1.9.22, Compose compiler 1.5.10
 
 ## Build from this repository root
 
@@ -37,6 +36,12 @@ Build both release APKs in one command:
 
 ```bash
 gradle -p PU-main assembleEditions
+```
+
+Run the shared unit tests and build both debug APKs (the same command CI runs):
+
+```bash
+gradle -p PU-main :shared:testDebugUnitTest :lite:assembleDebug :plus:assembleDebug
 ```
 
 APK output is written under `PU-main/lite/build/outputs/apk/release/` and `PU-main/plus/build/outputs/apk/release/` after a successful Android build.

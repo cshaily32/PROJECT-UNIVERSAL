@@ -11,6 +11,7 @@ import sgyt.pu.core.model.PuEngineType
 import sgyt.pu.core.model.PuGameRecord
 import sgyt.pu.core.model.PuLaunchAssessment
 import sgyt.pu.core.model.PuLaunchPreparation
+import sgyt.pu.core.model.PuOptimizationProfileSettings
 import sgyt.pu.core.model.PuRuntimeMatch
 import sgyt.pu.core.model.PuSandboxDescriptor
 import sgyt.pu.core.model.assessRuntime
@@ -22,26 +23,26 @@ import java.io.File
 
 /** Builds the per-game sandbox without changing any original game file. */
 class PuSandboxManager(private val storage: PuStorage) {
-    fun prepare(game: PuGameRecord, profile: PuProfile, networkAllowed: Boolean = false): PuSandboxDescriptor {
+    fun prepare(
+        game: PuGameRecord,
+        profile: PuProfile,
+        lite: Boolean = false,
+        networkAllowed: Boolean = false,
+    ): PuSandboxDescriptor {
         val root = storage.sandboxDirectory(game.id)
         val working = File(root, "working").apply { mkdirs() }
         val config = File(root, "config").apply { mkdirs() }
         val logs = File(root, "logs").apply { mkdirs() }
         val cache = storage.cacheDirectory(game.id).apply { mkdirs() }
 
+        val profileSettings = PuOptimizationProfileSettings.forProfile(profile, lite)
         val settings = PuJson.obj(
             "schemaVersion" to PuJson.number(1),
             "gameId" to PuJson.string(game.id),
             "profile" to PuJson.string(profile.name),
-            "imageCacheBytes" to PuJson.number(
-                PuOptimizationProfileSettingsFactory.forProfile(profile).imageCacheBytes,
-            ),
-            "rollbackHistory" to PuJson.number(
-                PuOptimizationProfileSettingsFactory.forProfile(profile).rollbackHistory,
-            ),
-            "predictiveLoading" to PuJson.bool(
-                PuOptimizationProfileSettingsFactory.forProfile(profile).predictiveLoading,
-            ),
+            "imageCacheBytes" to PuJson.number(profileSettings.imageCacheBytes),
+            "rollbackHistory" to PuJson.number(profileSettings.rollbackHistory),
+            "predictiveLoading" to PuJson.bool(profileSettings.predictiveLoading),
             "networkAllowed" to PuJson.bool(networkAllowed),
         )
         storage.writeJson(File(config, "pu-runtime.json"), settings)
@@ -60,11 +61,6 @@ class PuSandboxManager(private val storage: PuStorage) {
     fun clear(gameId: String) {
         storage.deleteRecursively(storage.sandboxDirectory(gameId))
     }
-}
-
-private object PuOptimizationProfileSettingsFactory {
-    fun forProfile(profile: PuProfile): sgyt.pu.core.model.PuOptimizationProfileSettings =
-        sgyt.pu.core.model.PuOptimizationProfileSettings.forProfile(profile, lite = false)
 }
 
 /**
@@ -115,7 +111,12 @@ class PuLaunchCoordinator(
 
         runtimeManager.markUsed(installed.runtimeId, installed.revision)
         val profile = manualProfile ?: game.selectedProfile ?: assessment.recommendedProfile
-        val sandbox = sandboxManager.prepare(game, profile, networkAllowed = false)
+        val sandbox = sandboxManager.prepare(
+            game = game,
+            profile = profile,
+            lite = edition == PuEdition.LITE,
+            networkAllowed = false,
+        )
         return PuLaunchPreparation.Ready(
             game = game,
             runtime = runtimeMatch.runtime,

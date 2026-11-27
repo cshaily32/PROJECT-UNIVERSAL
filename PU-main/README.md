@@ -31,7 +31,7 @@ See [`PU_SCREENS.md`](./PU_SCREENS.md) for the native route, requirement, and ed
 
 ## Build
 
-Add the **Android development stack in PocketDev Settings** before building (JDK 17, Gradle 8.9 or newer, and Android SDK 35 for AGP 8.7.3). From the repository root:
+The build needs JDK 17, Gradle 8.13 or newer, and Android SDK 36 with build tools 35.0.0 (AGP 8.11.0, Kotlin 1.9.22, Compose compiler 1.5.10). From the repository root:
 
 ```bash
 gradle -p PU-main :lite:assembleRelease
@@ -44,9 +44,15 @@ Build both release APKs in one command:
 gradle -p PU-main assembleEditions
 ```
 
+Run the shared unit tests and build both debug APKs (the same command CI runs):
+
+```bash
+gradle -p PU-main :shared:testDebugUnitTest :lite:assembleDebug :plus:assembleDebug
+```
+
 The generated APKs are written under `PU-main/lite/build/outputs/apk/release/` and `PU-main/plus/build/outputs/apk/release/`. The shared screens are compiled into each APK, while each application module controls its launcher name, capabilities, version suffix, and application ID.
 
-> The current PocketDev runtime does not contain Gradle, Java, the Android SDK, or aapt2. These Gradle commands are therefore not build-verified here, and no APK is claimed to exist yet.
+> The debug build, shared unit tests, and both APK assemblies have been verified locally with the toolchain listed above.
 
 ## Native feature status
 

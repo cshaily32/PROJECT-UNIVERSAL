@@ -107,7 +107,7 @@ class PuGameRepository(
     @Synchronized
     override fun deleteGame(gameId: String): Boolean {
         val records = loadRecords()
-        val record = records.firstOrNull { it.id == gameId } ?: return false
+        if (records.none { it.id == gameId }) return false
         storage.deleteRecursively(storage.gameDirectory(gameId))
         storage.deleteRecursively(storage.cacheDirectory(gameId))
         storage.deleteRecursively(storage.sandboxDirectory(gameId))
@@ -232,11 +232,11 @@ class PuGameRepository(
 
     private fun loadRecords(): List<PuGameRecord> {
         val root = storage.readJson(recordsFile) as? PuJsonValue.JsonObject ?: return emptyList()
-        return root.values.mapNotNull { value -> gameFromJson(value as? PuJsonValue.JsonObject ?: return@mapNotNull null) }
+        return PuGameRecordCodec.decodeAll(root)
     }
 
     private fun saveRecords(records: List<PuGameRecord>) {
-        storage.writeJson(recordsFile, PuJsonValue.JsonObject(records.associateBy { it.id }.mapValues { gameToJson(it.value) }))
+        storage.writeJson(recordsFile, PuGameRecordCodec.encodeAll(records))
     }
 
     private fun copyTree(resolver: ContentResolver, treeUri: Uri, destination: File) {
@@ -290,8 +290,18 @@ class PuGameRepository(
     }
 
     private fun newGameId(): String = UUID.randomUUID().toString()
+}
 
-    private fun gameToJson(game: PuGameRecord): PuJsonValue = PuJson.obj(
+/**
+ * Converts library records to and from their persisted JSON form.
+ *
+ * The collection helpers live here so the persisted-library round trip can be
+ * covered by a plain JVM unit test. `Map.mapNotNull` hands the lambda a
+ * `Map.Entry`, not the value, so every map read here goes through
+ * `entry.value` explicitly.
+ */
+internal object PuGameRecordCodec {
+    fun encode(game: PuGameRecord): PuJsonValue.JsonObject = PuJson.obj(
         "id" to PuJson.string(game.id),
         "rootPath" to PuJson.string(game.rootPath),
         "title" to PuJson.string(game.title),
@@ -308,7 +318,10 @@ class PuGameRepository(
         "sourceUri" to PuJson.nullableString(game.sourceUri),
     )
 
-    private fun gameFromJson(json: PuJsonValue.JsonObject): PuGameRecord? {
+    fun encodeAll(records: List<PuGameRecord>): PuJsonValue.JsonObject =
+        PuJsonValue.JsonObject(records.associateBy { it.id }.mapValues { entry -> encode(entry.value) })
+
+    fun decode(json: PuJsonValue.JsonObject): PuGameRecord? {
         val objectValue = PuJsonObject(json.values)
         val id = objectValue.string("id") ?: return null
         val rootPath = objectValue.string("rootPath") ?: return null
@@ -335,4 +348,9 @@ class PuGameRepository(
             sourceUri = objectValue.string("sourceUri"),
         )
     }
+
+    fun decodeAll(root: PuJsonValue.JsonObject): List<PuGameRecord> =
+        root.values.entries.mapNotNull { entry ->
+            decode(entry.value as? PuJsonValue.JsonObject ?: return@mapNotNull null)
+        }
 }

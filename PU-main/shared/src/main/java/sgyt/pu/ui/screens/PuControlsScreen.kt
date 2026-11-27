@@ -116,8 +116,8 @@ internal fun ControlsScreenContent(
                 ) {
                     return@onPreviewKeyEvent false
                 }
-                val key = keyEvent.nativeKeyEvent ?: return@onPreviewKeyEvent true
-                if (key.action != KeyEvent.KEY_DOWN || key.repeatCount != 0) {
+                val key = keyEvent.nativeKeyEvent
+                if (key.action != KeyEvent.ACTION_DOWN || key.repeatCount != 0) {
                     return@onPreviewKeyEvent true
                 }
                 onAction(
@@ -356,12 +356,13 @@ private fun ActionMappingRow(
     onAction: (PuControlsAction) -> Unit,
 ) {
     val binding = state.profile.bindings.firstOrNull { item -> item.action == action.id }
-    val touchSelected = state.captureTarget is PuControlsState.CaptureTarget.Touch &&
-        state.captureTarget?.action == action.id
-    val keyboardSelected = state.captureTarget is PuControlsState.CaptureTarget.Keyboard &&
-        state.captureTarget?.action == action.id
-    val gamepadSelected = state.captureTarget is PuControlsState.CaptureTarget.Gamepad &&
-        state.captureTarget?.action == action.id
+    val captureTarget = state.captureTarget
+    val touchSelected = captureTarget is PuControlsState.CaptureTarget.Touch &&
+        captureTarget.action == action.id
+    val keyboardSelected = captureTarget is PuControlsState.CaptureTarget.Keyboard &&
+        captureTarget.action == action.id
+    val gamepadSelected = captureTarget is PuControlsState.CaptureTarget.Gamepad &&
+        captureTarget.action == action.id
 
     Column(modifier = Modifier.padding(top = 14.dp)) {
         Row(

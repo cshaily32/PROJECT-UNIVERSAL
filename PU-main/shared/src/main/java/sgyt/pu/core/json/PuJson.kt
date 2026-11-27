@@ -57,13 +57,13 @@ object PuJson {
             is PuJsonValue.JsonObject -> {
                 out.append('{')
                 val entries = value.values.entries.toList()
-                entries.forEachIndexed { index, (key, child) ->
+                entries.forEachIndexed { index, entry ->
                     if (index > 0) out.append(',')
                     if (pretty) newlineAndIndent(out, depth + 1)
-                    writeString(out, key)
+                    writeString(out, entry.key)
                     out.append(':')
                     if (pretty) out.append(' ')
-                    writeValue(out, child, pretty, depth + 1)
+                    writeValue(out, entry.value, pretty, depth + 1)
                 }
                 if (entries.isNotEmpty() && pretty) newlineAndIndent(out, depth)
                 out.append('}')

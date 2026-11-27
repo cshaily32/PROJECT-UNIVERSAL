@@ -75,7 +75,7 @@ class PuCompatibilityService(
             "fixId" to PuJson.string(profile.id),
             "revision" to PuJson.number(profile.revision),
             "engine" to PuJson.string(profile.engine.name),
-            "settings" to PuJsonValue.JsonObject(profile.settings.mapValues { (_, value) -> PuJson.string(value) }),
+            "settings" to PuJsonValue.JsonObject(profile.settings.mapValues { entry -> PuJson.string(entry.value) }),
         )
         storage.writeJson(storage.safeChild(configDirectory, "compatibility-${profile.id}.json"), overlay)
         return gameRepository.applyFix(game.id, profile.id) != null

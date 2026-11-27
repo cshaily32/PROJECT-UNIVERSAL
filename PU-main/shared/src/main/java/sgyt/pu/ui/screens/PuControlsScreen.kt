@@ -1,7 +1,6 @@
 package sgyt.pu.ui.screens
 
 import android.view.KeyEvent
-import android.view.KeyEvent.KEY_DOWN
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -118,7 +117,7 @@ internal fun ControlsScreenContent(
                     return@onPreviewKeyEvent false
                 }
                 val key = keyEvent.nativeKeyEvent ?: return@onPreviewKeyEvent true
-                if (key.action != KEY_DOWN || key.repeatCount != 0) {
+                if (key.action != KeyEvent.KEY_DOWN || key.repeatCount != 0) {
                     return@onPreviewKeyEvent true
                 }
                 onAction(

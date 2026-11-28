@@ -25,13 +25,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import sgyt.pu.ui.theme.spacing
 import kotlinx.coroutines.flow.collectLatest
 import sgyt.pu.core.model.PuAssetKind
 import sgyt.pu.core.model.PuOptimizationManifest
 import sgyt.pu.model.PuProfile
 import sgyt.pu.ui.components.NoticeTone
 import sgyt.pu.ui.components.PuBody
-import sgyt.pu.ui.components.PuGlassCard
+import sgyt.pu.ui.components.PuCard
 import sgyt.pu.ui.components.PuLabel
 import sgyt.pu.ui.components.PuMetric
 import sgyt.pu.ui.components.PuNotice
@@ -97,11 +98,11 @@ internal fun PuOptimizerScreenContent(
                 PuOptimizerPhase.ERROR -> "Optimization could not finish"
             },
             style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(top = 3.dp),
+            modifier = Modifier.padding(top = MaterialTheme.spacing.xs),
         )
 
-        PuPrimaryCard(modifier = Modifier.padding(top = 20.dp)) {
-            Column(modifier = Modifier.padding(20.dp)) {
+        PuPrimaryCard(modifier = Modifier.padding(top = MaterialTheme.spacing.base)) {
+            Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     PuBody(
                         if (state.totalAssets > 0) {
@@ -114,21 +115,22 @@ internal fun PuOptimizerScreenContent(
                     Text(
                         text = state.profile.displayName,
                         style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.72f),
+                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.76f),
                     )
                 }
                 PuMetric(
                     value = "${(state.progress * 100).roundToInt()}%",
-                    modifier = Modifier.padding(top = 10.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.md),
                 )
                 PuProgressBar(
                     progress = state.progress,
-                    modifier = Modifier.padding(top = 14.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.md),
+                    onPrimarySurface = true,
                 )
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp),
+                        .padding(top = MaterialTheme.spacing.sm),
                 ) {
                     PuBody(
                         if (state.savedBytes > 0) "${formatBytes(state.savedBytes)} smaller" else "No size change yet",
@@ -143,12 +145,12 @@ internal fun PuOptimizerScreenContent(
             PuNotice(
                 text = message,
                 tone = if (state.phase == PuOptimizerPhase.ERROR) NoticeTone.WARNING else NoticeTone.INFO,
-                modifier = Modifier.padding(top = 16.dp),
+                modifier = Modifier.padding(top = MaterialTheme.spacing.base),
             )
         }
 
-        PuGlassCard(modifier = Modifier.padding(top = 16.dp)) {
-            Column(modifier = Modifier.padding(16.dp)) {
+        PuCard(modifier = Modifier.padding(top = MaterialTheme.spacing.base)) {
+            Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     PuLabel("Cache summary", modifier = Modifier.weight(1f))
                     PuBody(if (state.manifest == null) "No cache" else "Resumable")
@@ -172,8 +174,8 @@ internal fun PuOptimizerScreenContent(
             }
         }
 
-        PuGlassCard(modifier = Modifier.padding(top = 16.dp)) {
-            Column(modifier = Modifier.padding(16.dp)) {
+        PuCard(modifier = Modifier.padding(top = MaterialTheme.spacing.base)) {
+            Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     PuLabel("Asset types", modifier = Modifier.weight(1f))
                     PuBody("On-device")
@@ -219,49 +221,49 @@ internal fun PuOptimizerScreenContent(
                 false -> NoticeTone.WARNING
                 null -> NoticeTone.INFO
             },
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier.padding(top = MaterialTheme.spacing.base),
         )
 
         when (state.phase) {
             PuOptimizerPhase.IDLE -> PuPrimaryButton(
                 text = "Start optimization",
                 icon = Icons.Outlined.PlayArrow,
-                modifier = Modifier.padding(top = 16.dp),
+                modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                 onClick = { onAction(PuOptimizerAction.OnStart) },
             )
 
             PuOptimizerPhase.RUNNING -> PuSecondaryButton(
                 text = "Pause optimization",
                 icon = Icons.Outlined.Pause,
-                modifier = Modifier.padding(top = 16.dp),
+                modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                 onClick = { onAction(PuOptimizerAction.OnPause) },
             )
 
             PuOptimizerPhase.PAUSED -> PuPrimaryButton(
                 text = "Resume optimization",
                 icon = Icons.Outlined.PlayArrow,
-                modifier = Modifier.padding(top = 16.dp),
+                modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                 onClick = { onAction(PuOptimizerAction.OnResume) },
             )
 
             PuOptimizerPhase.COMPLETED -> PuPrimaryButton(
                 text = "Optimize again",
                 icon = Icons.Outlined.PlayArrow,
-                modifier = Modifier.padding(top = 16.dp),
+                modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                 onClick = { onAction(PuOptimizerAction.OnStart) },
             )
 
             PuOptimizerPhase.ERROR -> PuPrimaryButton(
                 text = "Try again",
                 icon = Icons.Outlined.PlayArrow,
-                modifier = Modifier.padding(top = 16.dp),
+                modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                 onClick = { onAction(PuOptimizerAction.OnStart) },
             )
         }
 
         PuSecondaryButton(
             text = "Compatibility fixes",
-            modifier = Modifier.padding(top = 10.dp),
+            modifier = Modifier.padding(top = MaterialTheme.spacing.md),
             onClick = onCompatibility,
         )
     }
@@ -272,7 +274,7 @@ private fun PuOptimizerStat(label: String, value: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 14.dp),
+            .padding(top = MaterialTheme.spacing.md),
     ) {
         PuBody(label, modifier = Modifier.weight(1f))
         Text(text = value, style = MaterialTheme.typography.labelLarge)
@@ -284,9 +286,9 @@ private fun PuOptimizerAssetRow(label: String, count: Int, active: Boolean) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 14.dp),
+            .padding(top = MaterialTheme.spacing.md),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
     ) {
         Surface(
             shape = CircleShape,

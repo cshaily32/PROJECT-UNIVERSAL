@@ -12,10 +12,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Archive
@@ -41,9 +43,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import sgyt.pu.ui.theme.signalColors
+import sgyt.pu.ui.theme.spacing
 import kotlinx.coroutines.flow.collectLatest
 import sgyt.pu.core.model.PuCapabilityCheck
 import sgyt.pu.core.model.PuCompatibilityEstimate
@@ -55,7 +60,7 @@ import sgyt.pu.model.StepState
 import sgyt.pu.ui.components.NoticeTone
 import sgyt.pu.ui.components.PuBody
 import sgyt.pu.ui.components.PuEditionBadge
-import sgyt.pu.ui.components.PuGlassCard
+import sgyt.pu.ui.components.PuCard
 import sgyt.pu.ui.components.PuLabel
 import sgyt.pu.ui.components.PuMetric
 import sgyt.pu.ui.components.PuNotice
@@ -142,8 +147,8 @@ private fun PuAddGameScreenContent(
         title = "Add game",
         onBack = onBack,
     ) {
-        PuPrimaryCard(modifier = Modifier.padding(top = 2.dp)) {
-            Column(modifier = Modifier.padding(20.dp)) {
+        PuPrimaryCard(modifier = Modifier.padding(top = MaterialTheme.spacing.xs)) {
+            Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "Local files only",
@@ -159,25 +164,25 @@ private fun PuAddGameScreenContent(
                 }
                 PuMetric(
                     value = "Add a game",
-                    modifier = Modifier.padding(top = 10.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.md),
                 )
                 Text(
                     text = "PU identifies the engine and version, then prepares the matching runtime when it is needed.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.74f),
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.sm),
                 )
             }
         }
 
-        PuLabel("Game source", modifier = Modifier.padding(top = 22.dp))
+        PuLabel("Game source", modifier = Modifier.padding(top = MaterialTheme.spacing.lg))
         PuSourceCard(
             title = "Game folder",
             detail = "Choose the folder that contains the game files.",
             icon = Icons.Outlined.FolderOpen,
             selected = state.source == PuImportSource.FOLDER,
             enabled = state.screenState != PuAddGameState.ScreenState.Importing,
-            modifier = Modifier.padding(top = 8.dp),
+            modifier = Modifier.padding(top = MaterialTheme.spacing.sm),
             onClick = { onAction(PuAddGameAction.OnSourceSelected(PuImportSource.FOLDER)) },
         )
         PuSourceCard(
@@ -186,12 +191,12 @@ private fun PuAddGameScreenContent(
             icon = Icons.Outlined.Archive,
             selected = state.source == PuImportSource.ARCHIVE,
             enabled = state.screenState != PuAddGameState.ScreenState.Importing,
-            modifier = Modifier.padding(top = 10.dp),
+            modifier = Modifier.padding(top = MaterialTheme.spacing.md),
             onClick = { onAction(PuAddGameAction.OnSourceSelected(PuImportSource.ARCHIVE)) },
         )
 
-        PuGlassCard(modifier = Modifier.padding(top = 16.dp)) {
-            Column(modifier = Modifier.padding(16.dp)) {
+        PuCard(modifier = Modifier.padding(top = MaterialTheme.spacing.base)) {
+            Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     PuLabel("Detection", modifier = Modifier.weight(1f))
                     PuBody("Before optimization")
@@ -206,7 +211,7 @@ private fun PuAddGameScreenContent(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 18.dp),
+                    .padding(top = MaterialTheme.spacing.base),
                 contentAlignment = Alignment.Center,
             ) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
@@ -229,7 +234,7 @@ private fun PuAddGameScreenContent(
                     append('.')
                 },
                 tone = NoticeTone.SUCCESS,
-                modifier = Modifier.padding(top = 16.dp),
+                modifier = Modifier.padding(top = MaterialTheme.spacing.base),
             )
         }
 
@@ -237,7 +242,7 @@ private fun PuAddGameScreenContent(
             PuNotice(
                 text = state.errorMessage,
                 tone = NoticeTone.WARNING,
-                modifier = Modifier.padding(top = 16.dp),
+                modifier = Modifier.padding(top = MaterialTheme.spacing.base),
             )
         }
 
@@ -258,7 +263,7 @@ private fun PuAddGameScreenContent(
                 else -> Icons.Outlined.Archive
             },
             enabled = state.screenState != PuAddGameState.ScreenState.Importing,
-            modifier = Modifier.padding(top = 20.dp),
+            modifier = Modifier.padding(top = MaterialTheme.spacing.base),
             onClick = {
                 when (state.screenState) {
                     PuAddGameState.ScreenState.Success -> onAction(PuAddGameAction.OnOpenLibrary)
@@ -310,11 +315,11 @@ private fun PuSourceCard(
     enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
-    PuGlassCard(modifier = modifier, onClick = if (enabled) onClick else null) {
+    PuCard(modifier = modifier, onClick = if (enabled) onClick else null) {
         Row(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(MaterialTheme.spacing.base),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
         ) {
             Surface(
                 shape = CircleShape,
@@ -324,12 +329,12 @@ private fun PuSourceCard(
                     icon,
                     contentDescription = null,
                     tint = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondary,
-                    modifier = Modifier.padding(11.dp).size(19.dp),
+                    modifier = Modifier.padding(MaterialTheme.spacing.md).size(19.dp),
                 )
             }
             Column(modifier = Modifier.weight(1f)) {
                 PuLabel(title)
-                PuBody(detail, modifier = Modifier.padding(top = 3.dp))
+                PuBody(detail, modifier = Modifier.padding(top = MaterialTheme.spacing.xs))
             }
             Surface(
                 shape = CircleShape,
@@ -342,7 +347,7 @@ private fun PuSourceCard(
                         Icons.Outlined.Check,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.padding(4.dp),
+                        modifier = Modifier.padding(MaterialTheme.spacing.xs),
                     )
                 }
             }
@@ -355,16 +360,16 @@ private fun PuDetectionStep(label: String, detail: String, state: StepState) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 14.dp),
+            .padding(top = MaterialTheme.spacing.md),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
     ) {
         Surface(
             shape = CircleShape,
             color = when (state) {
-                StepState.DONE -> MaterialTheme.colorScheme.tertiary
+                StepState.DONE -> MaterialTheme.signalColors.readyContainer
                 StepState.ACTIVE -> MaterialTheme.colorScheme.primary
-                else -> MaterialTheme.colorScheme.surfaceVariant
+                else -> MaterialTheme.colorScheme.outline
             },
             modifier = Modifier.size(24.dp),
         ) {
@@ -373,8 +378,8 @@ private fun PuDetectionStep(label: String, detail: String, state: StepState) {
                     Icon(
                         Icons.Outlined.Check,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.padding(5.dp),
+                        tint = MaterialTheme.signalColors.onReadyContainer,
+                        modifier = Modifier.padding(MaterialTheme.spacing.xs),
                     )
                 }
             }
@@ -421,7 +426,7 @@ private fun PuRuntimeDownloadScreenContent(
             PuRuntimeDownloadState.ScreenState.Loading -> Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 28.dp),
+                    .padding(vertical = MaterialTheme.spacing.xl),
                 contentAlignment = Alignment.Center,
             ) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
@@ -447,8 +452,8 @@ private fun PuRuntimeDownloadScreenContent(
                         PuRuntimeInstallationState.CANCELLED -> "Paused"
                         PuRuntimeInstallationState.FAILED -> "Rejected"
                     }
-                    PuPrimaryCard(modifier = Modifier.padding(top = 2.dp)) {
-                        Column(modifier = Modifier.padding(20.dp)) {
+                    PuPrimaryCard(modifier = Modifier.padding(top = MaterialTheme.spacing.xs)) {
+                        Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
                             Row(modifier = Modifier.fillMaxWidth()) {
                                 Text(
                                     text = runtime.name,
@@ -464,7 +469,7 @@ private fun PuRuntimeDownloadScreenContent(
                             }
                             PuMetric(
                                 value = formatBytes(runtime.compressedBytes),
-                                modifier = Modifier.padding(top = 10.dp),
+                                modifier = Modifier.padding(top = MaterialTheme.spacing.md),
                             )
                             Text(
                                 text = if (runtime.installed) {
@@ -474,7 +479,7 @@ private fun PuRuntimeDownloadScreenContent(
                                 },
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.74f),
-                                modifier = Modifier.padding(top = 8.dp),
+                                modifier = Modifier.padding(top = MaterialTheme.spacing.sm),
                             )
                             if (
                                 state.installationState == PuRuntimeInstallationState.DOWNLOADING ||
@@ -482,31 +487,32 @@ private fun PuRuntimeDownloadScreenContent(
                             ) {
                                 PuProgressBar(
                                     progress = state.progress,
-                                    modifier = Modifier.padding(top = 14.dp),
+                                    modifier = Modifier.padding(top = MaterialTheme.spacing.md),
+                                    onPrimarySurface = true,
                                 )
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(top = 8.dp),
+                                        .padding(top = MaterialTheme.spacing.sm),
                                 ) {
                                     Text(
                                         text = "${formatBytes(state.downloadedBytes)} of ${formatBytes(state.totalBytes)}",
                                         style = MaterialTheme.typography.labelMedium,
-                                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.70f),
+                                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.76f),
                                         modifier = Modifier.weight(1f),
                                     )
                                     Text(
                                         text = if (state.resumedFromBytes > 0) "Resumed" else "Resumable",
                                         style = MaterialTheme.typography.labelMedium,
-                                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.70f),
+                                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.76f),
                                     )
                                 }
                             }
                         }
                     }
 
-                    PuGlassCard(modifier = Modifier.padding(top = 16.dp)) {
-                        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                    PuCard(modifier = Modifier.padding(top = MaterialTheme.spacing.base)) {
+                        Column(modifier = Modifier.padding(horizontal = MaterialTheme.spacing.base)) {
                             PuSettingRow(
                                 icon = Icons.Outlined.Security,
                                 title = "Signed package",
@@ -532,39 +538,39 @@ private fun PuRuntimeDownloadScreenContent(
                         PuNotice(
                             text = runtime.requirement,
                             tone = NoticeTone.WARNING,
-                            modifier = Modifier.padding(top = 16.dp),
+                            modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                         )
                     }
                     if (state.errorMessage != null) {
                         PuNotice(
                             text = state.errorMessage,
                             tone = NoticeTone.WARNING,
-                            modifier = Modifier.padding(top = 16.dp),
+                            modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                         )
                     }
 
                     PuNotice(
                         text = "A failed update never replaces a working runtime. Corrupted packages are rejected.",
-                        modifier = Modifier.padding(top = 16.dp),
+                        modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                     )
 
                     when (state.installationState) {
                         PuRuntimeInstallationState.DOWNLOADING -> PuSecondaryButton(
                             text = "Cancel download",
-                            modifier = Modifier.padding(top = 20.dp),
+                            modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                             onClick = { onAction(PuRuntimeDownloadAction.OnCancel) },
                         )
 
                         PuRuntimeInstallationState.INSTALLED -> {
                             PuPrimaryButton(
                                 text = "Back to runtimes",
-                                modifier = Modifier.padding(top = 20.dp),
+                                modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                                 onClick = onBack,
                             )
                             PuSecondaryButton(
                                 text = "Remove runtime",
                                 icon = Icons.Outlined.DeleteOutline,
-                                modifier = Modifier.padding(top = 10.dp),
+                                modifier = Modifier.padding(top = MaterialTheme.spacing.md),
                                 onClick = { onAction(PuRuntimeDownloadAction.OnRemove) },
                             )
                         }
@@ -579,7 +585,7 @@ private fun PuRuntimeDownloadScreenContent(
                             },
                             icon = Icons.Outlined.Download,
                             enabled = runtime.supported,
-                            modifier = Modifier.padding(top = 20.dp),
+                            modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                             onClick = { onAction(PuRuntimeDownloadAction.OnDownload) },
                         )
                     }
@@ -634,7 +640,7 @@ private fun PuDeviceGateScreenContent(
             PuLaunchCheckState.ScreenState.Loading -> Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 28.dp),
+                    .padding(vertical = MaterialTheme.spacing.xl),
                 contentAlignment = Alignment.Center,
             ) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
@@ -647,7 +653,7 @@ private fun PuDeviceGateScreenContent(
                 )
                 PuPrimaryButton(
                     text = "Try again",
-                    modifier = Modifier.padding(top = 18.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                     onClick = { onAction(PuLaunchCheckAction.OnCheck) },
                 )
             }
@@ -661,12 +667,12 @@ private fun PuDeviceGateScreenContent(
                 )
                 PuPrimaryButton(
                     text = "Check again",
-                    modifier = Modifier.padding(top = 20.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                     onClick = { onAction(PuLaunchCheckAction.OnCheck) },
                 )
                 PuSecondaryButton(
                     text = "Back to game",
-                    modifier = Modifier.padding(top = 10.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.md),
                     onClick = onBack,
                 )
             }
@@ -680,17 +686,17 @@ private fun PuDeviceGateScreenContent(
                 )
                 PuNotice(
                     text = "The matching ${screenState.runtime.engine.engineLabel} ${screenState.runtime.versionFamily} runtime is not installed. Download it before launch.",
-                    modifier = Modifier.padding(top = 16.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                 )
                 PuPrimaryButton(
                     text = "Download ${screenState.runtime.engine.engineLabel} ${screenState.runtime.versionFamily}",
                     icon = Icons.Outlined.Download,
-                    modifier = Modifier.padding(top = 20.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                     onClick = { onAction(PuLaunchCheckAction.OnDownloadRuntime) },
                 )
                 PuSecondaryButton(
                     text = "Back to game",
-                    modifier = Modifier.padding(top = 10.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.md),
                     onClick = onBack,
                 )
             }
@@ -705,16 +711,16 @@ private fun PuDeviceGateScreenContent(
                 PuNotice(
                     text = "All required checks passed. PU prepared the game sandbox and has not started the game process yet.",
                     tone = NoticeTone.SUCCESS,
-                    modifier = Modifier.padding(top = 16.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                 )
                 PuPrimaryButton(
                     text = "Continue to optimization",
-                    modifier = Modifier.padding(top = 20.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                     onClick = onReady,
                 )
                 PuSecondaryButton(
                     text = "Back to game",
-                    modifier = Modifier.padding(top = 10.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.md),
                     onClick = onBack,
                 )
             }
@@ -728,8 +734,8 @@ private fun PuLaunchAssessmentCard(
     assessment: PuLaunchAssessment,
 ) {
     val game = state.game
-    PuPrimaryCard(modifier = Modifier.padding(top = 2.dp)) {
-        Column(modifier = Modifier.padding(20.dp)) {
+    PuPrimaryCard(modifier = Modifier.padding(top = MaterialTheme.spacing.xs)) {
+        Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     text = game?.title ?: "Game",
@@ -745,13 +751,13 @@ private fun PuLaunchAssessmentCard(
             }
             PuMetric(
                 value = assessment.estimate.label,
-                modifier = Modifier.padding(top = 10.dp),
+                modifier = Modifier.padding(top = MaterialTheme.spacing.md),
             )
             Text(
                 text = "Compatibility was checked on this phone before launch.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.74f),
-                modifier = Modifier.padding(top = 8.dp),
+                modifier = Modifier.padding(top = MaterialTheme.spacing.sm),
             )
         }
     }
@@ -759,8 +765,8 @@ private fun PuLaunchAssessmentCard(
 
 @Composable
 private fun PuLaunchChecksCard(checks: List<PuCapabilityCheck>) {
-    PuGlassCard(modifier = Modifier.padding(top = 16.dp)) {
-        Column(modifier = Modifier.padding(16.dp)) {
+    PuCard(modifier = Modifier.padding(top = MaterialTheme.spacing.base)) {
+        Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 PuLabel("Device requirements", modifier = Modifier.weight(1f))
                 PuBody("Checked before launch")
@@ -784,14 +790,14 @@ private fun PuLaunchMessages(
     if (warnings.isNotEmpty()) {
         PuNotice(
             text = warnings.joinToString(separator = "\n\n"),
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier.padding(top = MaterialTheme.spacing.base),
         )
     }
     if (blockers.isNotEmpty()) {
         PuNotice(
             text = blockers.joinToString(separator = "\n\n"),
             tone = NoticeTone.WARNING,
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier.padding(top = MaterialTheme.spacing.base),
         )
     }
 }
@@ -801,9 +807,9 @@ private fun PuGateStep(label: String, detail: String, passed: Boolean) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 14.dp),
+            .padding(top = MaterialTheme.spacing.md),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
     ) {
         Surface(
             shape = CircleShape,
@@ -819,7 +825,7 @@ private fun PuGateStep(label: String, detail: String, passed: Boolean) {
                     imageVector = if (passed) Icons.Outlined.Check else Icons.Outlined.WarningAmber,
                     contentDescription = null,
                     tint = if (passed) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(5.dp),
+                    modifier = Modifier.padding(MaterialTheme.spacing.xs),
                 )
             }
         }
@@ -877,8 +883,8 @@ private fun PuRuntimesScreenContent(
         Row(
             modifier = Modifier
                 .horizontalScroll(rememberScrollState())
-                .padding(top = 14.dp, bottom = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                .padding(top = MaterialTheme.spacing.md, bottom = MaterialTheme.spacing.base),
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
         ) {
             PuRuntimeFilter.entries.forEach { filter ->
                 val selected = filter == state.filter
@@ -887,9 +893,9 @@ private fun PuRuntimesScreenContent(
                     color = if (selected) {
                         MaterialTheme.colorScheme.primary
                     } else {
-                        MaterialTheme.colorScheme.surface.copy(alpha = 0.78f)
+                        MaterialTheme.colorScheme.surface
                     },
-                    border = BorderStroke(1.dp, Color.White.copy(alpha = 0.72f)),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                 ) {
                     Text(
                         text = filter.label,
@@ -900,8 +906,13 @@ private fun PuRuntimesScreenContent(
                             MaterialTheme.colorScheme.onSurfaceVariant
                         },
                         modifier = Modifier
-                            .clickable { onAction(PuRuntimesAction.OnFilterSelected(filter)) }
-                            .padding(horizontal = 14.dp, vertical = 9.dp),
+                            .selectable(
+                                selected = selected,
+                                role = Role.Tab,
+                                onClick = { onAction(PuRuntimesAction.OnFilterSelected(filter)) },
+                            )
+                            .heightIn(min = 44.dp)
+                            .padding(horizontal = MaterialTheme.spacing.base, vertical = MaterialTheme.spacing.sm),
                     )
                 }
             }
@@ -911,7 +922,7 @@ private fun PuRuntimesScreenContent(
             PuRuntimesState.ScreenState.Loading -> Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 28.dp),
+                    .padding(vertical = MaterialTheme.spacing.xl),
                 contentAlignment = Alignment.Center,
             ) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
@@ -925,8 +936,8 @@ private fun PuRuntimesScreenContent(
             PuRuntimesState.ScreenState.Success -> {
                 val visibleRuntimes = state.visibleRuntimes
                 if (visibleRuntimes.isEmpty()) {
-                    PuGlassCard {
-                        Column(modifier = Modifier.padding(20.dp)) {
+                    PuCard {
+                        Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
                             PuLabel("No runtime releases found")
                             PuBody(
                                 text = if (state.runtimes.isEmpty()) {
@@ -934,7 +945,7 @@ private fun PuRuntimesScreenContent(
                                 } else {
                                     "No installed runtime matches this filter."
                                 },
-                                modifier = Modifier.padding(top = 6.dp),
+                                modifier = Modifier.padding(top = MaterialTheme.spacing.sm),
                             )
                         }
                     }
@@ -946,7 +957,7 @@ private fun PuRuntimesScreenContent(
                             onRemove = {
                                 onAction(PuRuntimesAction.OnRemove(runtime.runtimeId, runtime.revision))
                             },
-                            modifier = Modifier.padding(bottom = 10.dp),
+                            modifier = Modifier.padding(bottom = MaterialTheme.spacing.md),
                         )
                     }
                 }
@@ -957,28 +968,28 @@ private fun PuRuntimesScreenContent(
             text = if (state.isRefreshingCatalog) "Updating catalog…" else "Update runtime catalog",
             icon = Icons.Outlined.Security,
             enabled = !state.isRefreshingCatalog,
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier.padding(top = MaterialTheme.spacing.base),
             onClick = { onAction(PuRuntimesAction.OnRefreshCatalog) },
         )
 
-        PuGlassCard(modifier = Modifier.padding(top = 6.dp)) {
+        PuCard(modifier = Modifier.padding(top = MaterialTheme.spacing.sm)) {
             Row(
-                modifier = Modifier.padding(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.padding(MaterialTheme.spacing.base),
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Surface(shape = CircleShape, color = MaterialTheme.colorScheme.secondary) {
                     Icon(
                         Icons.Outlined.Security,
                         contentDescription = null,
-                        modifier = Modifier.padding(10.dp).size(18.dp),
+                        modifier = Modifier.padding(MaterialTheme.spacing.md).size(18.dp),
                     )
                 }
                 Column(modifier = Modifier.weight(1f)) {
                     PuLabel("Signed and verified")
                     PuBody(
                         "Corrupted packages are rejected. Failed updates never replace a working runtime.",
-                        modifier = Modifier.padding(top = 3.dp),
+                        modifier = Modifier.padding(top = MaterialTheme.spacing.xs),
                     )
                 }
             }
@@ -993,14 +1004,14 @@ private fun PuRuntimeRow(
     onRemove: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    PuGlassCard(
+    PuCard(
         modifier = modifier,
         onClick = if (!runtime.installed && runtime.supported) onDownload else null,
     ) {
         Row(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(MaterialTheme.spacing.base),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
         ) {
             Surface(shape = CircleShape, color = MaterialTheme.colorScheme.secondary) {
                 Icon(
@@ -1010,7 +1021,7 @@ private fun PuRuntimeRow(
                         else -> Icons.Outlined.Download
                     },
                     contentDescription = null,
-                    modifier = Modifier.padding(10.dp).size(18.dp),
+                    modifier = Modifier.padding(MaterialTheme.spacing.md).size(18.dp),
                 )
             }
             Column(modifier = Modifier.weight(1f)) {
@@ -1021,13 +1032,13 @@ private fun PuRuntimeRow(
                         !runtime.supported -> runtime.requirement
                         else -> "${formatBytes(runtime.compressedBytes)} download · ${runtime.requirement}"
                     },
-                    modifier = Modifier.padding(top = 3.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.xs),
                 )
             }
             if (!runtime.installed && runtime.supported) {
                 Surface(shape = CircleShape, color = MaterialTheme.colorScheme.secondary) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                        modifier = Modifier.padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.sm),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(Icons.Outlined.Download, contentDescription = null, modifier = Modifier.size(15.dp))
@@ -1049,7 +1060,7 @@ private fun PuRuntimeRow(
                         text = "Blocked",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                        modifier = Modifier.padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.sm),
                     )
                 }
             }
@@ -1066,8 +1077,8 @@ fun WindowsModuleScreen(
         title = "Windows games",
         onBack = onBack,
     ) {
-        PuPrimaryCard(modifier = Modifier.padding(top = 2.dp)) {
-            Column(modifier = Modifier.padding(20.dp)) {
+        PuPrimaryCard(modifier = Modifier.padding(top = MaterialTheme.spacing.xs)) {
+            Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "Wine / Box64 module",
@@ -1079,7 +1090,7 @@ fun WindowsModuleScreen(
                 }
                 PuMetric(
                     value = if (config.windowsIncluded) "Included" else "Optional",
-                    modifier = Modifier.padding(top = 10.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.md),
                 )
                 Text(
                     text = if (config.windowsIncluded) {
@@ -1089,13 +1100,13 @@ fun WindowsModuleScreen(
                     },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.74f),
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.sm),
                 )
             }
         }
 
-        PuGlassCard(modifier = Modifier.padding(top = 16.dp)) {
-            Column(modifier = Modifier.padding(16.dp)) {
+        PuCard(modifier = Modifier.padding(top = MaterialTheme.spacing.base)) {
+            Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     PuLabel("Device check", modifier = Modifier.weight(1f))
                     PuBody("Before download")
@@ -1104,15 +1115,15 @@ fun WindowsModuleScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 14.dp),
+                            .padding(top = MaterialTheme.spacing.md),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
                     ) {
                         Surface(
                             shape = CircleShape,
                             color = when (check.state) {
-                                StepState.DONE -> MaterialTheme.colorScheme.tertiary
-                                StepState.WARNING -> MaterialTheme.colorScheme.tertiary.copy(alpha = 0.52f)
+                                StepState.DONE -> MaterialTheme.signalColors.readyContainer
+                                StepState.WARNING -> MaterialTheme.signalColors.warningContainer
                                 else -> MaterialTheme.colorScheme.surfaceVariant
                             },
                             modifier = Modifier.size(24.dp),
@@ -1121,8 +1132,12 @@ fun WindowsModuleScreen(
                                 Icon(
                                     imageVector = if (check.state == StepState.DONE) Icons.Outlined.Check else Icons.Outlined.WarningAmber,
                                     contentDescription = null,
-                                    tint = if (check.state == StepState.DONE) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onTertiary,
-                                    modifier = Modifier.padding(5.dp),
+                                    tint = when (check.state) {
+                                        StepState.DONE -> MaterialTheme.signalColors.onReadyContainer
+                                        StepState.WARNING -> MaterialTheme.signalColors.onWarningContainer
+                                        else -> MaterialTheme.colorScheme.onSurfaceVariant
+                                    },
+                                    modifier = Modifier.padding(MaterialTheme.spacing.xs),
                                 )
                             }
                         }
@@ -1133,8 +1148,8 @@ fun WindowsModuleScreen(
             }
         }
 
-        PuGlassCard(modifier = Modifier.padding(top = 16.dp)) {
-            Column(modifier = Modifier.padding(16.dp)) {
+        PuCard(modifier = Modifier.padding(top = MaterialTheme.spacing.base)) {
+            Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     PuBody("Compressed download", modifier = Modifier.weight(1f))
                     PuLabel("Up to 100 MB")
@@ -1142,7 +1157,7 @@ fun WindowsModuleScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 12.dp),
+                        .padding(top = MaterialTheme.spacing.md),
                 ) {
                     PuBody("Unpacked storage", modifier = Modifier.weight(1f))
                     PuLabel("About 280 MB")
@@ -1150,11 +1165,11 @@ fun WindowsModuleScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 12.dp),
+                        .padding(top = MaterialTheme.spacing.md),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(Icons.Outlined.Wifi, contentDescription = null, modifier = Modifier.size(17.dp))
-                    PuBody("Wi-Fi recommended", modifier = Modifier.padding(start = 7.dp))
+                    PuBody("Wi-Fi recommended", modifier = Modifier.padding(start = MaterialTheme.spacing.sm))
                 }
             }
         }
@@ -1162,12 +1177,12 @@ fun WindowsModuleScreen(
         PuPrimaryButton(
             text = if (config.windowsIncluded) "Open module settings" else "Download module",
             icon = if (config.windowsIncluded) Icons.Outlined.Monitor else Icons.Outlined.Download,
-            modifier = Modifier.padding(top = 20.dp),
+            modifier = Modifier.padding(top = MaterialTheme.spacing.base),
         )
         PuSecondaryButton(
             text = "Remove module",
             icon = Icons.Outlined.DeleteOutline,
-            modifier = Modifier.padding(top = 10.dp),
+            modifier = Modifier.padding(top = MaterialTheme.spacing.md),
         )
     }
 }

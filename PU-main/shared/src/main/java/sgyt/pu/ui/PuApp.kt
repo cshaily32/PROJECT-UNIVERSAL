@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -42,7 +43,8 @@ import sgyt.pu.ui.screens.SettingsScreen
 import sgyt.pu.ui.screens.TranslationScreen
 import sgyt.pu.ui.screens.WindowsModuleScreen
 import sgyt.pu.ui.model.PuRuntimeSelection
-import sgyt.pu.ui.theme.PuPalette
+import sgyt.pu.ui.theme.LocalPuBottomBarClearance
+import sgyt.pu.ui.theme.spacing
 import sgyt.pu.ui.viewmodels.PuAddGameViewModel
 import sgyt.pu.ui.viewmodels.PuCompatibilityViewModel
 import sgyt.pu.ui.viewmodels.PuControlsViewModel
@@ -93,15 +95,24 @@ fun PuApp(
         },
     )
 
-    CompositionLocalProvider(LocalPuEditionConfig provides config) {
-        val backStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = backStackEntry?.destination?.route
-        val selectedTab = PuMainTab.entries.firstOrNull { it.route == currentRoute }
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = backStackEntry?.destination?.route
+    val selectedTab = PuMainTab.entries.firstOrNull { it.route == currentRoute }
 
+    CompositionLocalProvider(
+        LocalPuEditionConfig provides config,
+        // The floating navigation bar floats over the content, so screens that sit under it need
+        // to clear it. Screens without the bar keep a normal bottom margin.
+        LocalPuBottomBarClearance provides if (selectedTab != null) {
+            MaterialTheme.spacing.bottomBarClearance
+        } else {
+            MaterialTheme.spacing.lg
+        },
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(PuPalette.Background)
+                .background(MaterialTheme.colorScheme.background)
                 .safeDrawingPadding(),
         ) {
             NavHost(
@@ -364,7 +375,10 @@ fun PuApp(
                     },
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(horizontal = 20.dp, vertical = 12.dp),
+                        .padding(
+                            horizontal = MaterialTheme.spacing.base,
+                            vertical = MaterialTheme.spacing.md,
+                        ),
                 )
             }
         }

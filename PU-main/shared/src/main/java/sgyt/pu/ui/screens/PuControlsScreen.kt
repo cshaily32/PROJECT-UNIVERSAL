@@ -47,13 +47,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import sgyt.pu.ui.theme.spacing
 import kotlinx.coroutines.flow.collectLatest
 import sgyt.pu.core.controls.PuControlAction
 import sgyt.pu.core.controls.PuControlProfileCodec
 import sgyt.pu.core.controls.PuGamepadInfo
 import sgyt.pu.ui.components.NoticeTone
 import sgyt.pu.ui.components.PuBody
-import sgyt.pu.ui.components.PuGlassCard
+import sgyt.pu.ui.components.PuCard
 import sgyt.pu.ui.components.PuLabel
 import sgyt.pu.ui.components.PuNotice
 import sgyt.pu.ui.components.PuPrimaryButton
@@ -134,7 +135,7 @@ internal fun ControlsScreenContent(
             PuControlsState.ScreenState.Loading -> Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 28.dp),
+                    .padding(vertical = MaterialTheme.spacing.xl),
                 contentAlignment = Alignment.Center,
             ) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
@@ -148,8 +149,8 @@ internal fun ControlsScreenContent(
             }
 
             PuControlsState.ScreenState.Success -> {
-                PuPrimaryCard(modifier = Modifier.padding(top = 2.dp)) {
-                    Column(modifier = Modifier.padding(20.dp)) {
+                PuPrimaryCard(modifier = Modifier.padding(top = MaterialTheme.spacing.xs)) {
+                    Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
                         Row(modifier = Modifier.fillMaxWidth()) {
                             Text(
                                 text = "Control profile",
@@ -173,19 +174,19 @@ internal fun ControlsScreenContent(
                             color = MaterialTheme.colorScheme.onPrimary,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.padding(top = 10.dp),
+                            modifier = Modifier.padding(top = MaterialTheme.spacing.md),
                         )
                         Text(
                             text = "Map every game action to touch, keyboard, and gamepad controls. Changes stay on this device until you save them.",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.74f),
-                            modifier = Modifier.padding(top = 8.dp),
+                            modifier = Modifier.padding(top = MaterialTheme.spacing.sm),
                         )
                     }
                 }
 
-                PuGlassCard(modifier = Modifier.padding(top = 16.dp)) {
-                    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                PuCard(modifier = Modifier.padding(top = MaterialTheme.spacing.base)) {
+                    Column(modifier = Modifier.padding(horizontal = MaterialTheme.spacing.base)) {
                         PuSettingRow(
                             icon = Icons.Outlined.PhoneAndroid,
                             title = "Touch overlay",
@@ -228,8 +229,8 @@ internal fun ControlsScreenContent(
                     }
                 }
 
-                PuGlassCard(modifier = Modifier.padding(top = 16.dp)) {
-                    Column(modifier = Modifier.padding(16.dp)) {
+                PuCard(modifier = Modifier.padding(top = MaterialTheme.spacing.base)) {
+                    Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
@@ -240,15 +241,15 @@ internal fun ControlsScreenContent(
                         if (state.gamepads.isEmpty()) {
                             PuBody(
                                 text = "No gamepad detected. Connect one, then use Detect gamepads.",
-                                modifier = Modifier.padding(top = 8.dp),
+                                modifier = Modifier.padding(top = MaterialTheme.spacing.sm),
                             )
                         } else {
                             state.gamepads.forEach { gamepad ->
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(top = 10.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                        .padding(top = MaterialTheme.spacing.md),
+                                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     Icon(
@@ -267,30 +268,30 @@ internal fun ControlsScreenContent(
                         }
                         PuSecondaryButton(
                             text = "Detect gamepads",
-                            modifier = Modifier.padding(top = 12.dp),
+                            modifier = Modifier.padding(top = MaterialTheme.spacing.md),
                             onClick = { onAction(PuControlsAction.OnRefreshGamepads) },
                         )
                     }
                 }
 
-                PuLabel("Touch layout", modifier = Modifier.padding(top = 22.dp))
+                PuLabel("Touch layout", modifier = Modifier.padding(top = MaterialTheme.spacing.lg))
                 PuBody(
                     text = if (state.captureTarget is PuControlsState.CaptureTarget.Touch) {
                         "Tap the preview to place the selected action."
                     } else {
                         "Choose Touch below an action to reposition it."
                     },
-                    modifier = Modifier.padding(top = 3.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.xs),
                 )
                 TouchControlPreview(
                     state = state,
                     onAction = onAction,
-                    modifier = Modifier.padding(top = 10.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.md),
                 )
 
-                PuLabel("Action mapping", modifier = Modifier.padding(top = 22.dp))
-                PuGlassCard(modifier = Modifier.padding(top = 10.dp)) {
-                    Column(modifier = Modifier.padding(16.dp)) {
+                PuLabel("Action mapping", modifier = Modifier.padding(top = MaterialTheme.spacing.lg))
+                PuCard(modifier = Modifier.padding(top = MaterialTheme.spacing.md)) {
+                    Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
                         CaptureInstruction(state.captureTarget)
                         PuControlAction.entries.forEach { action ->
                             ActionMappingRow(
@@ -306,20 +307,20 @@ internal fun ControlsScreenContent(
                     PuNotice(
                         text = message,
                         tone = NoticeTone.WARNING,
-                        modifier = Modifier.padding(top = 16.dp),
+                        modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                     )
                 }
 
                 PuPrimaryButton(
                     text = if (state.isSaving) "Saving…" else "Save controls",
                     enabled = state.isDirty && !state.isSaving,
-                    modifier = Modifier.padding(top = 20.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                     onClick = { onAction(PuControlsAction.OnSave) },
                 )
                 PuSecondaryButton(
                     text = "Reset mappings",
                     enabled = !state.isSaving,
-                    modifier = Modifier.padding(top = 10.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.md),
                     onClick = { onAction(PuControlsAction.OnReset) },
                 )
             }
@@ -364,7 +365,7 @@ private fun ActionMappingRow(
     val gamepadSelected = captureTarget is PuControlsState.CaptureTarget.Gamepad &&
         captureTarget.action == action.id
 
-    Column(modifier = Modifier.padding(top = 14.dp)) {
+    Column(modifier = Modifier.padding(top = MaterialTheme.spacing.md)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -373,7 +374,7 @@ private fun ActionMappingRow(
                 PuLabel(action.label)
                 PuBody(
                     text = "Key: ${keyLabel(binding?.keyboardKeyCode)} · Pad: ${keyLabel(binding?.gamepadButton)}",
-                    modifier = Modifier.padding(top = 3.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.xs),
                 )
             }
             MappingButton(
@@ -424,7 +425,7 @@ private fun TouchControlPreview(
         modifier = modifier
             .fillMaxWidth()
             .height(220.dp)
-            .clip(RoundedCornerShape(22.dp))
+            .clip(MaterialTheme.shapes.extraLarge)
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .pointerInput(selectedAction) {
                 detectTapGestures { position ->
@@ -465,7 +466,6 @@ private fun TouchControlPreview(
                         MaterialTheme.colorScheme.outline
                     },
                 ),
-                shadowElevation = 1.dp,
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Text(

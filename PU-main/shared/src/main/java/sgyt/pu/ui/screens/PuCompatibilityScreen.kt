@@ -26,12 +26,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import sgyt.pu.ui.theme.signalColors
+import sgyt.pu.ui.theme.spacing
 import kotlinx.coroutines.flow.collectLatest
 import sgyt.pu.core.model.PuEngineType
 import sgyt.pu.core.model.PuFixProfile
 import sgyt.pu.ui.components.NoticeTone
 import sgyt.pu.ui.components.PuBody
-import sgyt.pu.ui.components.PuGlassCard
+import sgyt.pu.ui.components.PuCard
 import sgyt.pu.ui.components.PuLabel
 import sgyt.pu.ui.components.PuNotice
 import sgyt.pu.ui.components.PuPrimaryCard
@@ -88,7 +90,7 @@ internal fun PuCompatibilityScreenContent(
             PuCompatibilityState.ScreenState.Loading -> Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 28.dp),
+                    .padding(vertical = MaterialTheme.spacing.xl),
                 contentAlignment = Alignment.Center,
             ) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
@@ -101,14 +103,14 @@ internal fun PuCompatibilityScreenContent(
                 )
                 PuSecondaryButton(
                     text = "Try again",
-                    modifier = Modifier.padding(top = 16.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                     onClick = { onAction(PuCompatibilityAction.OnRefresh) },
                 )
             }
 
             PuCompatibilityState.ScreenState.Success -> {
-                PuPrimaryCard(modifier = Modifier.padding(top = 2.dp)) {
-                    Column(modifier = Modifier.padding(20.dp)) {
+                PuPrimaryCard(modifier = Modifier.padding(top = MaterialTheme.spacing.xs)) {
+                    Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
                         Row(modifier = Modifier.fillMaxWidth()) {
                             Text(
                                 text = "Offline compatibility database",
@@ -127,13 +129,13 @@ internal fun PuCompatibilityScreenContent(
                             style = MaterialTheme.typography.headlineMedium,
                             color = MaterialTheme.colorScheme.onPrimary,
                             maxLines = 2,
-                            modifier = Modifier.padding(top = 10.dp),
+                            modifier = Modifier.padding(top = MaterialTheme.spacing.md),
                         )
                         Text(
                             text = "A fix profile writes runtime settings inside this game's sandbox. The original game files are never changed.",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.74f),
-                            modifier = Modifier.padding(top = 8.dp),
+                            modifier = Modifier.padding(top = MaterialTheme.spacing.sm),
                         )
                     }
                 }
@@ -142,32 +144,32 @@ internal fun PuCompatibilityScreenContent(
                     text = if (state.isRefreshingCatalog) "Updating database…" else "Update signed database",
                     icon = Icons.Outlined.Build,
                     enabled = !state.isRefreshingCatalog,
-                    modifier = Modifier.padding(top = 16.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                     onClick = { onAction(PuCompatibilityAction.OnRefreshCatalog) },
                 )
 
                 if (state.profiles.isEmpty()) {
                     PuNotice(
                         text = "No matching fix profile is available for this engine and version. Try a lower optimization profile from the game details screen.",
-                        modifier = Modifier.padding(top = 16.dp),
+                        modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                     )
                 } else {
-                    PuLabel("Available fixes", modifier = Modifier.padding(top = 22.dp))
+                    PuLabel("Available fixes", modifier = Modifier.padding(top = MaterialTheme.spacing.lg))
                     state.profiles.forEach { profile ->
                         val applied = profile.id in state.appliedFixIds
                         val applying = state.applyingFixId == profile.id
-                        PuGlassCard(modifier = Modifier.padding(top = 10.dp)) {
-                            Column(modifier = Modifier.padding(16.dp)) {
+                        PuCard(modifier = Modifier.padding(top = MaterialTheme.spacing.md)) {
+                            Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
                                 Row(
                                     verticalAlignment = Alignment.Top,
-                                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
                                 ) {
                                     Surface(shape = CircleShape, color = MaterialTheme.colorScheme.secondary) {
                                         Icon(
                                             Icons.Outlined.Build,
                                             contentDescription = null,
                                             modifier = Modifier
-                                                .padding(10.dp)
+                                                .padding(MaterialTheme.spacing.md)
                                                 .size(18.dp),
                                         )
                                     }
@@ -177,14 +179,14 @@ internal fun PuCompatibilityScreenContent(
                                             text = profile.settings.entries.joinToString(" · ") { entry ->
                                                 "${entry.key}=${entry.value}"
                                             }.ifBlank { "Runtime compatibility settings" },
-                                            modifier = Modifier.padding(top = 4.dp),
+                                            modifier = Modifier.padding(top = MaterialTheme.spacing.xs),
                                         )
                                     }
                                     if (applied) {
                                         Icon(
                                             Icons.Outlined.Check,
                                             contentDescription = "Applied",
-                                            tint = MaterialTheme.colorScheme.tertiary,
+                                            tint = MaterialTheme.signalColors.onReadyContainer,
                                         )
                                     }
                                 }
@@ -196,7 +198,7 @@ internal fun PuCompatibilityScreenContent(
                                     },
                                     icon = if (applied) Icons.Outlined.Check else Icons.Outlined.Build,
                                     enabled = !applied && !applying,
-                                    modifier = Modifier.padding(top = 14.dp),
+                                    modifier = Modifier.padding(top = MaterialTheme.spacing.md),
                                     onClick = { onAction(PuCompatibilityAction.OnApply(profile.id)) },
                                 )
                             }
@@ -208,13 +210,13 @@ internal fun PuCompatibilityScreenContent(
                     PuNotice(
                         text = message,
                         tone = NoticeTone.WARNING,
-                        modifier = Modifier.padding(top = 16.dp),
+                        modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                     )
                 }
 
                 PuNotice(
                     text = "Downloaded databases are accepted only when their signature matches the configured PU trust key. The bundled database remains available offline.",
-                    modifier = Modifier.padding(top = 16.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                 )
             }
         }

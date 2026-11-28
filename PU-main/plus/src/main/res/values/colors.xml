@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Matches PuPalette.Background so the cold-start window does not flash a different colour
+         before Compose draws the first frame. -->
+    <color name="pu_window_background">#ECF2ED</color>
+</resources>

@@ -27,6 +27,9 @@ data class PuImportResult(
     val detection: PuDetectionResult,
 )
 
+/** Control characters that never belong in a file name. */
+private val CONTROL_CHARACTERS = Regex("[\\p{Cntrl}]")
+
 /**
  * Persistent library and import pipeline. Imported content is copied into
  * app-owned storage so document-provider permissions are not required at launch.
@@ -270,7 +273,7 @@ class PuGameRepository(
                 val id = cursor.getString(idIndex) ?: continue
                 val name = cursor.getString(nameIndex) ?: continue
                 val mime = cursor.getString(mimeIndex).orEmpty()
-                val target = File(destination, name)
+                val target = resolveInside(destination, name)
                 if (mime == DocumentsContract.Document.MIME_TYPE_DIR) {
                     target.mkdirs()
                     copyDocumentChildren(resolver, treeUri, id, target)
@@ -287,6 +290,27 @@ class PuGameRepository(
     private fun readDisplayName(cursor: Cursor): String? {
         val index = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_DISPLAY_NAME)
         return if (index >= 0 && cursor.moveToFirst()) cursor.getString(index) else null
+    }
+
+    /**
+     * Resolves a provider-supplied document name to a file inside [destination].
+     *
+     * The display name comes from a content provider, which is untrusted: it may contain path
+     * separators or `..` segments that would write outside the game's own folder. Only the last
+     * path segment is kept, control characters are dropped, and the resolved path is checked
+     * against the destination before anything is written.
+     */
+    private fun resolveInside(destination: File, name: String): File {
+        val leaf = name.substringAfterLast('/').substringAfterLast('\\')
+        val cleaned = leaf.replace(CONTROL_CHARACTERS, "").trim().take(255)
+        val safeName = cleaned.takeUnless { it.isEmpty() || it == "." || it == ".." } ?: "file"
+        val target = File(destination, safeName)
+        val root = destination.canonicalFile
+        val resolved = target.canonicalFile
+        if (resolved != root && !resolved.path.startsWith(root.path + File.separator)) {
+            throw IOException("Document name escapes the import folder: $name")
+        }
+        return target
     }
 
     private fun newGameId(): String = UUID.randomUUID().toString()

@@ -44,12 +44,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import sgyt.pu.ui.theme.signalColors
+import sgyt.pu.ui.theme.spacing
 import sgyt.pu.model.PuEditionConfig
 import sgyt.pu.model.PuSampleData
 import sgyt.pu.ui.components.NoticeTone
 import sgyt.pu.ui.components.PuBody
 import sgyt.pu.ui.components.PuEditionBadge
-import sgyt.pu.ui.components.PuGlassCard
+import sgyt.pu.ui.components.PuCard
 import sgyt.pu.ui.components.PuLabel
 import sgyt.pu.ui.components.PuMetric
 import sgyt.pu.ui.components.PuNotice
@@ -95,18 +97,18 @@ private fun PuDeviceCheckScreenContent(
         Text(
             text = "Check this phone",
             style = MaterialTheme.typography.headlineLarge,
-            modifier = Modifier.padding(top = 2.dp),
+            modifier = Modifier.padding(top = MaterialTheme.spacing.xs),
         )
         PuBody(
             "PU reads the processor, memory, Android version and graphics support before it recommends a profile.",
-            modifier = Modifier.padding(top = 8.dp),
+            modifier = Modifier.padding(top = MaterialTheme.spacing.sm),
         )
 
         when (state.screenState) {
             PuDeviceCheckState.ScreenState.Loading -> Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 28.dp),
+                    .padding(vertical = MaterialTheme.spacing.xl),
                 contentAlignment = Alignment.Center,
             ) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
@@ -119,8 +121,8 @@ private fun PuDeviceCheckScreenContent(
 
             PuDeviceCheckState.ScreenState.Success -> {
                 val recommendation = state.recommendation
-                PuPrimaryCard(modifier = Modifier.padding(top = 20.dp)) {
-                    Column(modifier = Modifier.padding(20.dp)) {
+                PuPrimaryCard(modifier = Modifier.padding(top = MaterialTheme.spacing.base)) {
+                    Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
                         Row(modifier = Modifier.fillMaxWidth()) {
                             Text(
                                 text = "Recommended edition",
@@ -136,18 +138,18 @@ private fun PuDeviceCheckScreenContent(
                         }
                         PuMetric(
                             value = recommendation?.edition?.editionLabel ?: "—",
-                            modifier = Modifier.padding(top = 10.dp),
+                            modifier = Modifier.padding(top = MaterialTheme.spacing.md),
                         )
                         Text(
                             text = recommendation?.reason
                                 ?: "PU could not work out a recommendation for this phone.",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.74f),
-                            modifier = Modifier.padding(top = 8.dp),
+                            modifier = Modifier.padding(top = MaterialTheme.spacing.sm),
                         )
                         PuBody(
                             text = "Recommended profile: ${recommendation?.profile?.displayName ?: "—"}",
-                            modifier = Modifier.padding(top = 8.dp),
+                            modifier = Modifier.padding(top = MaterialTheme.spacing.sm),
                         )
                     }
                 }
@@ -156,8 +158,8 @@ private fun PuDeviceCheckScreenContent(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 12.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            .padding(top = MaterialTheme.spacing.md),
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
                     ) {
                         rowFacts.forEach { fact ->
                             PuDeviceFact(
@@ -170,14 +172,14 @@ private fun PuDeviceCheckScreenContent(
 
                 PuNotice(
                     text = deviceNotice(state),
-                    modifier = Modifier.padding(top = 16.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                 )
             }
         }
 
         PuPrimaryButton(
             text = "Continue to library",
-            modifier = Modifier.padding(top = 20.dp),
+            modifier = Modifier.padding(top = MaterialTheme.spacing.base),
             onClick = onContinue,
         )
     }
@@ -198,45 +200,40 @@ private fun PuDeviceFact(
     modifier: Modifier = Modifier,
 ) {
     val passed = fact.status == PuDeviceFactStatus.PASS
-    PuGlassCard(modifier = modifier) {
-        Column(modifier = Modifier.padding(16.dp)) {
+    val signals = MaterialTheme.signalColors
+    PuCard(modifier = modifier) {
+        Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 Surface(shape = CircleShape, color = MaterialTheme.colorScheme.secondary) {
                     Icon(
                         imageVector = puDeviceIcon(fact.icon),
                         contentDescription = null,
-                        modifier = Modifier.padding(10.dp).size(18.dp),
+                        modifier = Modifier.padding(MaterialTheme.spacing.md).size(18.dp),
                     )
                 }
                 Spacer(Modifier.weight(1f))
+                // The pill carries the status as a word in [detail] plus this icon; the colour
+                // follows the ready/warning pair so the tick stays legible on its own fill.
                 Surface(
                     shape = CircleShape,
-                    color = if (passed) {
-                        MaterialTheme.colorScheme.tertiary
-                    } else {
-                        MaterialTheme.colorScheme.secondary
-                    },
+                    color = if (passed) signals.readyContainer else signals.warningContainer,
                 ) {
                     Icon(
                         imageVector = if (passed) Icons.Outlined.Check else Icons.Outlined.WarningAmber,
-                        contentDescription = null,
-                        tint = if (passed) {
-                            MaterialTheme.colorScheme.onPrimary
-                        } else {
-                            MaterialTheme.colorScheme.onSecondary
-                        },
-                        modifier = Modifier.padding(4.dp).size(14.dp),
+                        contentDescription = if (passed) "Passed" else "Warning",
+                        tint = if (passed) signals.onReadyContainer else signals.onWarningContainer,
+                        modifier = Modifier.padding(MaterialTheme.spacing.xs).size(14.dp),
                     )
                 }
             }
-            PuBody(fact.label, modifier = Modifier.padding(top = 12.dp))
+            PuBody(fact.label, modifier = Modifier.padding(top = MaterialTheme.spacing.md))
             Text(
                 text = fact.value,
                 style = MaterialTheme.typography.titleLarge,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            PuBody(fact.detail, modifier = Modifier.padding(top = 3.dp))
+            PuBody(fact.detail, modifier = Modifier.padding(top = MaterialTheme.spacing.xs))
         }
     }
 }
@@ -262,8 +259,8 @@ fun SavesScreen(
         title = "Saves and backup",
         onBack = onBack,
     ) {
-        PuPrimaryCard(modifier = Modifier.padding(top = 2.dp)) {
-            Column(modifier = Modifier.padding(20.dp)) {
+        PuPrimaryCard(modifier = Modifier.padding(top = MaterialTheme.spacing.xs)) {
+            Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "Backup destination",
@@ -275,7 +272,7 @@ fun SavesScreen(
                 }
                 PuMetric(
                     value = if (cloud) "Cloud" else "Local",
-                    modifier = Modifier.padding(top = 10.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.md),
                 )
                 Text(
                     text = if (config.cloudSyncEnabled) {
@@ -285,7 +282,7 @@ fun SavesScreen(
                     },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.74f),
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.sm),
                 )
             }
         }
@@ -294,12 +291,12 @@ fun SavesScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp),
+                    .padding(top = MaterialTheme.spacing.base),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     PuLabel("Save location")
-                    PuBody("Choose where new backups are stored", modifier = Modifier.padding(top = 2.dp))
+                    PuBody("Choose where new backups are stored", modifier = Modifier.padding(top = MaterialTheme.spacing.xs))
                 }
                 PuSegmentedControl(
                     options = listOf("Local", "Cloud"),
@@ -309,9 +306,9 @@ fun SavesScreen(
             }
         }
 
-        PuLabel("Game saves", modifier = Modifier.padding(top = 22.dp))
-        PuGlassCard(modifier = Modifier.padding(top = 8.dp)) {
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+        PuLabel("Game saves", modifier = Modifier.padding(top = MaterialTheme.spacing.lg))
+        PuCard(modifier = Modifier.padding(top = MaterialTheme.spacing.sm)) {
+            Column(modifier = Modifier.padding(horizontal = MaterialTheme.spacing.base)) {
                 listOf("Quick save", "Slot 1", "Slot 2").forEach { name ->
                     PuSettingRow(
                         icon = Icons.Outlined.Save,
@@ -324,14 +321,14 @@ fun SavesScreen(
 
         PuNotice(
             text = "Backups use the same save format in PU Lite and PU Plus, so a save can move between editions.",
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier.padding(top = MaterialTheme.spacing.base),
         )
 
         PuPrimaryButton(
             text = if (backedUp) "Backup complete" else "Back up saves",
             icon = if (backedUp) Icons.Outlined.Check else if (cloud) Icons.Outlined.Cloud else Icons.Outlined.Save,
             enabled = !backedUp,
-            modifier = Modifier.padding(top = 20.dp),
+            modifier = Modifier.padding(top = MaterialTheme.spacing.base),
             onClick = { backedUp = true },
         )
     }
@@ -348,8 +345,8 @@ fun TranslationScreen(
         title = "Translation overlay",
         onBack = onBack,
     ) {
-        PuPrimaryCard(modifier = Modifier.padding(top = 2.dp)) {
-            Column(modifier = Modifier.padding(20.dp)) {
+        PuPrimaryCard(modifier = Modifier.padding(top = MaterialTheme.spacing.xs)) {
+            Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = if (config.translationEnabled) "Offline translation" else "PU Plus feature",
@@ -361,7 +358,7 @@ fun TranslationScreen(
                 }
                 PuMetric(
                     value = if (config.translationEnabled) "OCR" else "Offline translation",
-                    modifier = Modifier.padding(top = 10.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.md),
                 )
                 Text(
                     text = if (config.translationEnabled) {
@@ -371,14 +368,14 @@ fun TranslationScreen(
                     },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.74f),
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.sm),
                 )
             }
         }
 
         if (config.translationEnabled) {
-            PuGlassCard(modifier = Modifier.padding(top = 16.dp)) {
-                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            PuCard(modifier = Modifier.padding(top = MaterialTheme.spacing.base)) {
+                Column(modifier = Modifier.padding(horizontal = MaterialTheme.spacing.base)) {
                     PuSettingRow(
                         icon = Icons.Outlined.Translate,
                         title = "Show translation overlay",
@@ -404,15 +401,15 @@ fun TranslationScreen(
             }
             PuNotice(
                 text = "Translation runs on this phone. Captured game images are never uploaded.",
-                modifier = Modifier.padding(top = 16.dp),
+                modifier = Modifier.padding(top = MaterialTheme.spacing.base),
             )
             PuPrimaryButton(
                 text = "Save translation settings",
-                modifier = Modifier.padding(top = 20.dp),
+                modifier = Modifier.padding(top = MaterialTheme.spacing.base),
             )
         } else {
-            PuGlassCard(modifier = Modifier.padding(top = 16.dp)) {
-                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            PuCard(modifier = Modifier.padding(top = MaterialTheme.spacing.base)) {
+                Column(modifier = Modifier.padding(horizontal = MaterialTheme.spacing.base)) {
                     PuSettingRow(
                         icon = Icons.Outlined.Translate,
                         title = "Translate on-screen text",
@@ -429,7 +426,7 @@ fun TranslationScreen(
             }
             PuNotice(
                 text = "PU Lite keeps the same screen and shows Plus features as quiet rows instead of interrupting play.",
-                modifier = Modifier.padding(top = 16.dp),
+                modifier = Modifier.padding(top = MaterialTheme.spacing.base),
             )
         }
     }
@@ -448,8 +445,8 @@ fun BackgroundScreen(
         title = "Background work",
         onBack = onBack,
     ) {
-        PuPrimaryCard(modifier = Modifier.padding(top = 2.dp)) {
-            Column(modifier = Modifier.padding(20.dp)) {
+        PuPrimaryCard(modifier = Modifier.padding(top = MaterialTheme.spacing.xs)) {
+            Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "Background work",
@@ -461,7 +458,7 @@ fun BackgroundScreen(
                 }
                 PuMetric(
                     value = if (config.backgroundWorkEnabled) "Charging" else "Off while idle",
-                    modifier = Modifier.padding(top = 10.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.md),
                 )
                 Text(
                     text = if (config.backgroundWorkEnabled) {
@@ -471,13 +468,13 @@ fun BackgroundScreen(
                     },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.74f),
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.sm),
                 )
             }
         }
 
-        PuGlassCard(modifier = Modifier.padding(top = 16.dp)) {
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+        PuCard(modifier = Modifier.padding(top = MaterialTheme.spacing.base)) {
+            Column(modifier = Modifier.padding(horizontal = MaterialTheme.spacing.base)) {
                 if (config.backgroundWorkEnabled) {
                     PuSettingRow(
                         icon = Icons.Outlined.WarningAmber,
@@ -528,13 +525,13 @@ fun BackgroundScreen(
 
         PuNotice(
             text = "Background optimization is incremental. New or changed assets are processed without repeating completed work.",
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier.padding(top = MaterialTheme.spacing.base),
         )
 
         if (config.backgroundWorkEnabled) {
             PuPrimaryButton(
                 text = "Save background settings",
-                modifier = Modifier.padding(top = 20.dp),
+                modifier = Modifier.padding(top = MaterialTheme.spacing.base),
             )
         }
     }
@@ -561,14 +558,14 @@ fun SettingsScreen(
         PuLabel("Performance profile")
         PuSampleData.profiles.forEach { option ->
             val selected = option.profile == selectedProfile
-            PuGlassCard(
-                modifier = Modifier.padding(top = 8.dp),
+            PuCard(
+                modifier = Modifier.padding(top = MaterialTheme.spacing.sm),
                 onClick = { selectedProfile = option.profile },
             ) {
                 Row(
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier.padding(MaterialTheme.spacing.base),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
                 ) {
                     Surface(
                         shape = CircleShape,
@@ -581,7 +578,7 @@ fun SettingsScreen(
                                 Icons.Outlined.Check,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier.padding(4.dp),
+                                modifier = Modifier.padding(MaterialTheme.spacing.xs),
                             )
                         }
                     }
@@ -593,19 +590,19 @@ fun SettingsScreen(
                                     Text(
                                         text = "Recommended",
                                         style = MaterialTheme.typography.labelMedium,
-                                        modifier = Modifier.padding(horizontal = 9.dp, vertical = 5.dp),
+                                        modifier = Modifier.padding(horizontal = MaterialTheme.spacing.sm, vertical = MaterialTheme.spacing.xs),
                                     )
                                 }
                             }
                         }
-                        PuBody(option.detail, modifier = Modifier.padding(top = 3.dp))
+                        PuBody(option.detail, modifier = Modifier.padding(top = MaterialTheme.spacing.xs))
                     }
                 }
             }
         }
 
-        PuGlassCard(modifier = Modifier.padding(top = 16.dp)) {
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+        PuCard(modifier = Modifier.padding(top = MaterialTheme.spacing.base)) {
+            Column(modifier = Modifier.padding(horizontal = MaterialTheme.spacing.base)) {
                 PuSettingRow(
                     icon = Icons.Outlined.Thermostat,
                     title = "Pause optimizing when hot",
@@ -668,26 +665,26 @@ fun SettingsScreen(
             }
         }
 
-        PuGlassCard(modifier = Modifier.padding(top = 16.dp)) {
-            Column(modifier = Modifier.padding(16.dp)) {
+        PuCard(modifier = Modifier.padding(top = MaterialTheme.spacing.base)) {
+            Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.weight(1f)) {
                         PuLabel("This phone")
-                        PuBody("First-launch device check", modifier = Modifier.padding(top = 2.dp))
+                        PuBody("First-launch device check", modifier = Modifier.padding(top = MaterialTheme.spacing.xs))
                     }
                     Surface(shape = CircleShape, color = MaterialTheme.colorScheme.secondary) {
                         Text(
                             text = "PU Lite recommended",
                             style = MaterialTheme.typography.labelMedium,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                            modifier = Modifier.padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.sm),
                         )
                     }
                 }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 14.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        .padding(top = MaterialTheme.spacing.md),
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
                 ) {
                     listOf(
                         "RAM" to "3 GB",
@@ -695,16 +692,16 @@ fun SettingsScreen(
                         "Android" to "14",
                     ).forEach { (label, value) ->
                         Surface(
-                            shape = RoundedCornerShape(16.dp),
+                            shape = MaterialTheme.shapes.large,
                             color = MaterialTheme.colorScheme.surfaceVariant,
                             modifier = Modifier.weight(1f),
                         ) {
                             Column(
-                                modifier = Modifier.padding(vertical = 10.dp),
+                                modifier = Modifier.padding(vertical = MaterialTheme.spacing.md),
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 PuBody(label)
-                                PuLabel(value, modifier = Modifier.padding(top = 2.dp))
+                                PuLabel(value, modifier = Modifier.padding(top = MaterialTheme.spacing.xs))
                             }
                         }
                     }
@@ -712,8 +709,8 @@ fun SettingsScreen(
             }
         }
 
-        PuPrimaryCard(modifier = Modifier.padding(top = 16.dp)) {
-            Column(modifier = Modifier.padding(20.dp)) {
+        PuPrimaryCard(modifier = Modifier.padding(top = MaterialTheme.spacing.base)) {
+            Column(modifier = Modifier.padding(MaterialTheme.spacing.base)) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = config.label,
@@ -735,7 +732,7 @@ fun SettingsScreen(
                     },
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.sm),
                 )
                 Text(
                     text = if (config.edition.name == "PLUS") {
@@ -744,8 +741,8 @@ fun SettingsScreen(
                         "Low optimization by default, optional Windows module, local backups, and no background work."
                     },
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.70f),
-                    modifier = Modifier.padding(top = 8.dp),
+                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.76f),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.sm),
                 )
             }
         }

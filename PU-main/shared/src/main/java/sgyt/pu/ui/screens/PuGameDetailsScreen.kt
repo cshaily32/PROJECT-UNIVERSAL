@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import sgyt.pu.ui.theme.spacing
 import kotlinx.coroutines.flow.collectLatest
 import sgyt.pu.core.model.PuEngineType
 import sgyt.pu.core.model.PuGameRecord
@@ -44,7 +45,7 @@ import sgyt.pu.ui.components.PuBody
 import sgyt.pu.ui.components.PuCompatibilityChip
 import sgyt.pu.ui.components.PuEditionBadge
 import sgyt.pu.ui.components.PuGameCover
-import sgyt.pu.ui.components.PuGlassCard
+import sgyt.pu.ui.components.PuCard
 import sgyt.pu.ui.components.PuLabel
 import sgyt.pu.ui.components.PuNotice
 import sgyt.pu.ui.components.PuPrimaryButton
@@ -118,7 +119,7 @@ internal fun PuGameDetailsScreenContent(
             PuGameDetailsState.ScreenState.Loading -> Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 28.dp),
+                    .padding(vertical = MaterialTheme.spacing.xl),
                 contentAlignment = Alignment.Center,
             ) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
@@ -131,7 +132,7 @@ internal fun PuGameDetailsScreenContent(
                 )
                 PuPrimaryButton(
                     text = "Try again",
-                    modifier = Modifier.padding(top = 18.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                     onClick = { onAction(PuGameDetailsAction.OnRefresh) },
                 )
             }
@@ -149,25 +150,25 @@ internal fun PuGameDetailsScreenContent(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 18.dp),
+                        .padding(top = MaterialTheme.spacing.base),
                     verticalAlignment = Alignment.Top,
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(text = game.title, style = MaterialTheme.typography.headlineMedium)
                         PuBody(
                             text = "${game.engine} ${game.version} · ${game.originalSize} original",
-                            modifier = Modifier.padding(top = 4.dp),
+                            modifier = Modifier.padding(top = MaterialTheme.spacing.xs),
                         )
                     }
                 }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 12.dp),
+                        .padding(top = MaterialTheme.spacing.md),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     PuCompatibilityChip(game.compatibility)
-                    Spacer(Modifier.width(10.dp))
+                    Spacer(Modifier.width(MaterialTheme.spacing.sm))
                     PuBody(
                         if (state.cacheSizeBytes > 0) {
                             "${formatBytes(state.cacheSizeBytes)} optimized"
@@ -179,14 +180,14 @@ internal fun PuGameDetailsScreenContent(
 
                 PuNotice(
                     text = "PU checks this phone's Android version, graphics, memory, storage, and matching runtime before the game can start.",
-                    modifier = Modifier.padding(top = 18.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                 )
 
-                PuLabel("Performance profile", modifier = Modifier.padding(top = 22.dp))
+                PuLabel("Performance profile", modifier = Modifier.padding(top = MaterialTheme.spacing.lg))
                 PuSegmentedControl(
                     options = PuProfile.entries.map { it.displayName },
                     selectedIndex = PuProfile.entries.indexOf(state.selectedProfile),
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.sm),
                     onSelected = { index ->
                         onAction(PuGameDetailsAction.OnProfileSelected(PuProfile.entries[index]))
                     },
@@ -197,51 +198,51 @@ internal fun PuGameDetailsScreenContent(
                         PuProfile.LOW -> "720p assets and a capped runtime image cache"
                         PuProfile.BALANCED -> "Near-original quality with light runtime tuning"
                     },
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.sm),
                 )
                 if (state.manifest != null && !state.hasCurrentProfileCache) {
                     PuNotice(
                         text = "The existing cache uses the ${state.manifest.profile.displayName} profile. Run optimization again to rebuild it for ${state.selectedProfile.displayName}.",
-                        modifier = Modifier.padding(top = 12.dp),
+                        modifier = Modifier.padding(top = MaterialTheme.spacing.md),
                     )
                 }
                 state.errorMessage?.let { message ->
                     PuNotice(
                         text = message,
                         tone = NoticeTone.WARNING,
-                        modifier = Modifier.padding(top = 12.dp),
+                        modifier = Modifier.padding(top = MaterialTheme.spacing.md),
                     )
                 }
 
-                PuGlassCard(
+                PuCard(
                     onClick = onCompatibility,
-                    modifier = Modifier.padding(top = 16.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                 ) {
                     Row(
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier.padding(MaterialTheme.spacing.base),
                         verticalAlignment = Alignment.Top,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
                     ) {
                         Surface(shape = CircleShape, color = MaterialTheme.colorScheme.secondary) {
                             Icon(
                                 Icons.Outlined.WarningAmber,
                                 contentDescription = null,
-                                modifier = Modifier.padding(10.dp).size(18.dp),
+                                modifier = Modifier.padding(MaterialTheme.spacing.md).size(18.dp),
                             )
                         }
                         Column(modifier = Modifier.weight(1f)) {
                             PuLabel("Compatibility fixes")
                             PuBody(
                                 "Check the signed offline fix database for this game.",
-                                modifier = Modifier.padding(top = 3.dp),
+                                modifier = Modifier.padding(top = MaterialTheme.spacing.xs),
                             )
                         }
                         Icon(Icons.Outlined.ChevronRight, contentDescription = null)
                     }
                 }
 
-                PuGlassCard(modifier = Modifier.padding(top = 16.dp)) {
-                    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                PuCard(modifier = Modifier.padding(top = MaterialTheme.spacing.base)) {
+                    Column(modifier = Modifier.padding(horizontal = MaterialTheme.spacing.base)) {
                         PuSettingRow(
                             icon = Icons.Outlined.SportsEsports,
                             title = "Touch overlay and gamepad",
@@ -275,14 +276,14 @@ internal fun PuGameDetailsScreenContent(
                         text = if (state.isClearingCache) "Clearing cache…" else "Clear optimized cache",
                         icon = Icons.Outlined.DeleteOutline,
                         enabled = !state.isClearingCache,
-                        modifier = Modifier.padding(top = 16.dp),
+                        modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                         onClick = { onAction(PuGameDetailsAction.OnClearCache) },
                     )
                 }
 
                 PuPrimaryButton(
                     text = "Play",
-                    modifier = Modifier.padding(top = 20.dp),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.base),
                     onClick = onPlay,
                 )
             }
